@@ -1,0 +1,312 @@
+Coverage Report by file with details
+
+=================================================================================
+=== File: Top.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            2         2         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file Top.sv --
+
+    1                                                module top();
+    2                                                bit clk=0;
+    3                                                
+    4               1                         39     always #5 clk=!clk;
+    4               2                         38     
+    5                                                
+    6                                                if_pe if_t(clk);
+    7                                                priority_enc dut(if_t);
+    8                                                priority_enc_tb tb(if_t);
+    9                                                asser ASV(if_t);
+    10                                               
+    11                                               
+    12                                               endmodule
+    13                                               
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         0         0         0     100.0
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      2         2         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File Top.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+          2                                    clk           1           1      100.00 
+
+Total Node Count     =          1 
+Toggled Node Count   =          1 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (2 of 2 bins)
+
+=================================================================================
+=== File: if_pe.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            0         0         0     100.0
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         0         0         0     100.0
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                     18        18         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File if_pe.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+          2                                    clk           1           1      100.00 
+          3                                    rst           1           1      100.00 
+          4                                   D[3]           1           1      100.00 
+          4                                   D[2]           1           1      100.00 
+          4                                   D[1]           1           1      100.00 
+          4                                   D[0]           1           1      100.00 
+          5                                   Y[1]           1           1      100.00 
+          5                                   Y[0]           1           1      100.00 
+          6                                  valid           1           1      100.00 
+
+Total Node Count     =          9 
+Toggled Node Count   =          9 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (18 of 18 bins)
+
+=================================================================================
+=== File: priority_enc.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            8         8         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file priority_enc.sv --
+
+    1                                                module priority_enc (if_pe.DUT if_t);
+    2                                                
+    3               1                         19     always @(posedge if_t.clk) begin
+    4                                                  if (if_t.rst) begin
+    5               1                          3          if_t.Y <= 2'b0;
+    6               1                          3     	 if_t.valid<=1'b0;
+    7                                                	 end
+    8                                                  else
+    9                                                  begin
+    10                                                 	casex (if_t.D)
+    11              1                          1       		4'b1000: if_t.Y <= 0;//2'b00  1
+    12              1                          2       		4'bX100: if_t.Y <= 1;//2'b01  1
+    13              1                          4       		4'bXX10: if_t.Y <= 2;//2'b10  1
+    14              1                          8       		4'bXXX1: if_t.Y <= 3;//2'b11  1
+    15                                                 	endcase
+    16              1                         16       	if_t.valid <= (~|if_t.D)? 1'b0: 1'b1; 
+    17                                                 end
+    18                                               end
+    19                                               endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         7         7         0     100.0
+
+================================Branch Details================================
+
+Branch Coverage for file priority_enc.sv --
+
+------------------------------------IF Branch------------------------------------
+    4                                         19     Count coming in to IF
+    4               1                          3       if (if_t.rst) begin
+    8               1                         16       else
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------CASE Branch------------------------------------
+    10                                        16     Count coming in to CASE
+    11              1                          1       		4'b1000: if_t.Y <= 0;//2'b00  1
+    12              1                          2       		4'bX100: if_t.Y <= 1;//2'b01  1
+    13              1                          4       		4'bXX10: if_t.Y <= 2;//2'b10  1
+    14              1                          8       		4'bXXX1: if_t.Y <= 3;//2'b11  1
+                                               1     All False Count
+Branch totals: 5 hits of 5 branches = 100.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File priority_enc.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+=================================================================================
+=== File: priority_enc_tb.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           14        14         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file priority_enc_tb.sv --
+
+    1                                                module priority_enc_tb(if_pe.TB if_t);
+    2                                                
+    3                                                
+    4                                                initial begin
+    5                                                	
+    6               1                          1     if_t.D=1;
+    7               1                          1     if_t.rst=1;
+    8               1                          1     @(negedge if_t.clk);#2;
+    8               2                          1     
+    9               1                          1     if_t.rst=0;
+    10                                               
+    11              1                          1     for(int i=0;i<16;i++)begin
+    11              2                         16     
+    12              1                         16     	if_t.D=i;
+    13              1                         16     	@(negedge if_t.clk);
+    14                                               end
+    15              1                          1     if_t.D=0;
+    16              1                          1     if_t.rst=1;
+    17                                               
+    18              1                          2     repeat(2) @(negedge if_t.clk);
+    18              2                          2     
+    19              1                          1     $stop;
+    20                                               end
+    21                                               
+    22                                               
+    23                                               endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         0         0         0     100.0
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File priority_enc_tb.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+
+DIRECTIVE COVERAGE:
+---------------------------------------------------------------------------------------------
+Name                                     Design Design   Lang File(Line)      Count Status    
+                                         Unit   UnitType                                      
+---------------------------------------------------------------------------------------------
+/top/ASV/rst_check_cover                 asser  Verilog  SVA  asser.sv(39)        2 Covered   
+/top/ASV/valid_bit_check_cover           asser  Verilog  SVA  asser.sv(40)       14 Covered   
+/top/ASV/output_check_cover0             asser  Verilog  SVA  asser.sv(42)        7 Covered   
+/top/ASV/output_check_cover1             asser  Verilog  SVA  asser.sv(43)        4 Covered   
+/top/ASV/output_check_cover2             asser  Verilog  SVA  asser.sv(44)        2 Covered   
+/top/ASV/output_check_cover3             asser  Verilog  SVA  asser.sv(45)        1 Covered   
+
+TOTAL DIRECTIVE COVERAGE: 100.0%  COVERS: 6
+
+ASSERTION RESULTS:
+-------------------------------------------------------
+Name                 File(Line)           Failure Pass 
+                                          Count   Count 
+-------------------------------------------------------
+/top/ASV/rst_check   asser.sv(31)               0     1
+/top/ASV/valid_bit_check
+                     asser.sv(32)               0     1
+/top/ASV/output_c0   asser.sv(34)               0     1
+/top/ASV/output_c1   asser.sv(35)               0     1
+/top/ASV/output_c2   asser.sv(36)               0     1
+/top/ASV/output_c3   asser.sv(37)               0     1
+
+Total Coverage By File (code coverage only, filtered view): 100.0%
+

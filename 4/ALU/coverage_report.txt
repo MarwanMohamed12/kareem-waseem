@@ -1,0 +1,328 @@
+Coverage Report by file with details
+
+=================================================================================
+=== File: ALU.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            8         8         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file ALU.sv --
+
+    1                                                import pack_file::*;
+    2                                                module ALU_4_bit(if_d.DUT if_t);
+    3                                                   reg signed [4:0]Alu_out;
+    4                                                   // Do the operation
+    5               1                          1        always @* begin
+    6                                                      case (if_t.Opcode)
+    7               1                         15           	if_t.Add:     Alu_out = if_t.A + if_t.B;
+    8               1                         19           	if_t.Sub:     Alu_out = if_t.A - if_t.B;
+    9               1                          5           	if_t.Not_A:   Alu_out = ~if_t.A;
+    10              1                         10           	if_t.ReductionOR_B:  Alu_out = |if_t.B;
+    11              1                          E             default:  Alu_out = 5'b0;
+    12                                                     endcase
+    13                                                  end // always @ *
+    14                                               
+    15                                                  // Register output C
+    16              1                         54        always @(posedge if_t.clk or posedge if_t.reset) begin
+    17                                                     if (if_t.reset)
+    18              1                          6     	     if_t.C <= 5'b0;
+    19                                                     else
+    20              1                         48     	     if_t.C<= Alu_out;
+    21                                                  end
+    22                                               
+    23                                               endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         6         6         0     100.0
+
+================================Branch Details================================
+
+Branch Coverage for file ALU.sv --
+
+------------------------------------CASE Branch------------------------------------
+    6                                         49     Count coming in to CASE
+    7               1                         15           	if_t.Add:     Alu_out = if_t.A + if_t.B;
+    8               1                         19           	if_t.Sub:     Alu_out = if_t.A - if_t.B;
+    9               1                          5           	if_t.Not_A:   Alu_out = ~if_t.A;
+    10              1                         10           	if_t.ReductionOR_B:  Alu_out = |if_t.B;
+    11              1                          E             default:  Alu_out = 5'b0;
+Branch totals: 4 hits of 4 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    17                                        54     Count coming in to IF
+    17              1                          6           if (if_t.reset)
+    19              1                         48           else
+Branch totals: 2 hits of 2 branches = 100.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                     10        10         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File ALU.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+          3                             Alu_out[4]           1           1      100.00 
+          3                             Alu_out[3]           1           1      100.00 
+          3                             Alu_out[2]           1           1      100.00 
+          3                             Alu_out[1]           1           1      100.00 
+          3                             Alu_out[0]           1           1      100.00 
+
+Total Node Count     =          5 
+Toggled Node Count   =          5 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (10 of 10 bins)
+
+=================================================================================
+=== File: ALU_tb.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           14        14         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file ALU_tb.sv --
+
+    1                                                import pack_file::*;
+    2                                                module ALU_tb (if_d.TB if_t);
+    3                                                
+    4               1                          1     transaction tr=new();
+    5                                                initial begin
+    6               1                          1         if_t.reset=1;
+    7               1                          1         @(negedge if_t.clk);
+    8               1                          1         if_t.A=0;if_t.B=0;if_t.Opcode=0;
+    8               2                          1     
+    8               3                          1     
+    9               1                          1         if_t.reset=0;
+    10              1                         50         repeat(50) begin
+    11                                                       assert(tr.randomize());   
+    12              1                         50             if_t.reset=tr.reset;
+    13              1                         50             if_t.Opcode=tr.Opcode;
+    14              1                         50             if_t.A=tr.A;
+    15              1                         50             if_t.B=tr.B; 
+    16              1                         50     	@(negedge if_t.clk);
+    17                                               
+    18                                                  
+    19                                                   end
+    20              1                          1     $stop;
+    21                                               end
+    22                                               
+    23                                               
+    24                                               
+    25                                               endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         0         0         0     100.0
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File ALU_tb.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+=================================================================================
+=== File: if.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            0         0         0     100.0
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         0         0         0     100.0
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                     34        34         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File if.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+          3                                    clk           1           1      100.00 
+          4                                  reset           1           1      100.00 
+          5                              Opcode[1]           1           1      100.00 
+          5                              Opcode[0]           1           1      100.00 
+          6                                   A[3]           1           1      100.00 
+          6                                   A[2]           1           1      100.00 
+          6                                   A[1]           1           1      100.00 
+          6                                   A[0]           1           1      100.00 
+          7                                   B[3]           1           1      100.00 
+          7                                   B[2]           1           1      100.00 
+          7                                   B[1]           1           1      100.00 
+          7                                   B[0]           1           1      100.00 
+          8                                   C[4]           1           1      100.00 
+          8                                   C[3]           1           1      100.00 
+          8                                   C[2]           1           1      100.00 
+          8                                   C[1]           1           1      100.00 
+          8                                   C[0]           1           1      100.00 
+
+Total Node Count     =         17 
+Toggled Node Count   =         17 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (34 of 34 bins)
+
+=================================================================================
+=== File: top.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            2         2         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file top.sv --
+
+    1                                                module top();
+    2                                                bit clk=0;
+    3                                                
+    4               1                        103     always #50 clk=!clk;
+    4               2                        102     
+    5                                                
+    6                                                if_d if_t(clk);
+    7                                                ALU_4_bit dut(if_t);
+    8                                                ALU_tb tb(if_t);
+    9                                                Asser ASV(if_t);
+    10                                               
+    11                                               
+    12                                               endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         0         0         0     100.0
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      2         2         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File top.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+          2                                    clk           1           1      100.00 
+
+Total Node Count     =          1 
+Toggled Node Count   =          1 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (2 of 2 bins)
+
+
+DIRECTIVE COVERAGE:
+---------------------------------------------------------------------------------------------
+Name                                     Design Design   Lang File(Line)      Count Status    
+                                         Unit   UnitType                                      
+---------------------------------------------------------------------------------------------
+/top/ASV/rst_co                          Asser  Verilog  SVA  Asser.sv(31)        3 Covered   
+/top/ASV/addition_co                     Asser  Verilog  SVA  Asser.sv(35)       15 Covered   
+/top/ASV/subtraction_co                  Asser  Verilog  SVA  Asser.sv(39)       16 Covered   
+/top/ASV/not_ch_co                       Asser  Verilog  SVA  Asser.sv(43)        5 Covered   
+/top/ASV/oring_co                        Asser  Verilog  SVA  Asser.sv(47)       11 Covered   
+
+TOTAL DIRECTIVE COVERAGE: 100.0%  COVERS: 5
+
+ASSERTION RESULTS:
+-------------------------------------------------------
+Name                 File(Line)           Failure Pass 
+                                          Count   Count 
+-------------------------------------------------------
+/top/tb/#ublk#73512610#10/immed__11
+                     ALU_tb.sv(11)              0     1
+/top/ASV/rst         Asser.sv(29)               0     1
+/top/ASV/addition    Asser.sv(33)               0     1
+/top/ASV/subtraction Asser.sv(37)               0     1
+/top/ASV/not_ch      Asser.sv(41)               0     1
+/top/ASV/oring       Asser.sv(45)               0     1
+
+Total Coverage By File (code coverage only, filtered view): 100.0%
+

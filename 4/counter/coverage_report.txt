@@ -1,0 +1,720 @@
+Coverage Report by file with details
+
+=================================================================================
+=== File: asser.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            1         1         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file asser.sv --
+
+    1                                                module asser(if_counter.Assertions if_t);
+    2                                                
+    3                                                property load_check;
+    4                                                @(negedge if_t.clk) disable iff (!if_t.rst_n) (! if_t.load_n  |-> if_t.count_out == if_t.data_load );
+    5                                                endproperty
+    6                                                
+    7                                                property turn_off_all;
+    8                                                @(negedge if_t.clk) disable iff (!if_t.rst_n) ( (if_t.load_n && !if_t.ce)  |-> $stable(if_t.count_out) );
+    9                                                endproperty
+    10                                               
+    11                                               property count_up;
+    12                                               @(negedge if_t.clk) disable iff (!if_t.rst_n) ( (if_t.load_n && if_t.ce &&  if_t.up_down)  |-> if_t.count_out == $past(if_t.count_out) + 1'b1 );
+    13                                               endproperty
+    14                                               
+    15                                               property count_down;
+    16                                               @(negedge if_t.clk) disable iff (!if_t.rst_n) ( (if_t.load_n && if_t.ce &&  !if_t.up_down) |-> if_t.count_out == $past(if_t.count_out) - 1'b1 );
+    17                                               endproperty
+    18                                               
+    19                                               
+    20                                               property maximum;
+    21                                               @(negedge if_t.clk) disable iff (!if_t.rst_n) ( if_t.count_out==4'b1111 |-> if_t.max_count== 1'b1 );
+    22                                               endproperty
+    23                                               
+    24                                               property minimum;
+    25                                               @(negedge if_t.clk) disable iff (!if_t.rst_n) ( if_t.count_out==4'b0000 |-> if_t.zero== 1'b1 );
+    26                                               endproperty
+    27                                               
+    28                                               
+    29                                               // immediate assertion
+    30              1                        196     always_comb begin 
+    31                                                   if(!if_t.rst_n)begin
+    32                                                   rst_check:assert final ( if_t.count_out==0 && if_t.zero==1 && if_t.max_count==0 ) ;
+    33                                                   reset_cover:cover (if_t.count_out==0 && if_t.zero==1 && if_t.max_count==0); 
+    34                                                   end
+    35                                               end
+    36                                               
+    37                                               
+    38                                               //concurent assertion
+    39                                               
+    40                                               load_assert:assert property(load_check) else $display("@%0t reset=%0d",$time,if_t.rst_n);
+    41                                               turn_off_all_assert:assert property(turn_off_all)else $display("@%0t reset=%0d",$time,if_t.rst_n);
+    42                                               count_up_assert:assert property(count_up)else $display("@%0t reset=%0d",$time,if_t.rst_n);
+    43                                               count_down_assert:assert property(count_down)else $display("@%0t reset=%0d",$time,if_t.rst_n);
+    44                                               maximum_assert:assert property(maximum)else $display("@%0t reset=%0d",$time,if_t.rst_n);
+    45                                               minimum_assert:assert property(minimum)else $display("@%0t reset=%0d",$time,if_t.rst_n);
+    46                                               
+    47                                               //coverage assertion
+    48                                               load_cover:cover property(load_check);
+    49                                               turn_off_all_cover:cover property(turn_off_all);
+    50                                               count_up_cover:cover property(count_up);
+    51                                               count_down_cover:cover property(count_down);
+    52                                               maximum_cover:cover property(maximum);
+    53                                               minimum_cover:cover property(minimum);
+    54                                               
+    55                                               
+    56                                               
+    57                                               endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         2         2         0     100.0
+
+================================Branch Details================================
+
+Branch Coverage for file asser.sv --
+
+------------------------------------IF Branch------------------------------------
+    31                                       196     Count coming in to IF
+    31              1                         21         if(!if_t.rst_n)begin
+                                             175     All False Count
+Branch totals: 2 hits of 2 branches = 100.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File asser.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+=================================================================================
+=== File: counter.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            7         7         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file counter.sv --
+
+    1                                                ////////////////////////////////////////////////////////////////////////////////
+    2                                                // Author: Kareem Waseem
+    3                                                // Course: Digital Verification using SV & UVM
+    4                                                //
+    5                                                // Description: Counter Design 
+    6                                                // 
+    7                                                ////////////////////////////////////////////////////////////////////////////////
+    8                                                
+    9                                                module counter (if_counter.DUT if_t);
+    10                                               
+    11              1                        212     always @(posedge if_t.clk or negedge if_t.rst_n) begin
+    12                                                   if (!if_t.rst_n)
+    13              1                         24             if_t.count_out <= 0;
+    14                                                   else if (!if_t.load_n)
+    15              1                        134             if_t.count_out <= if_t.data_load;
+    16                                                   else if (if_t.ce)
+    17                                                       if (if_t.up_down)
+    18              1                         18                 if_t.count_out <= if_t.count_out + 1;
+    19                                                       else 
+    20              1                         19                 if_t.count_out <= if_t.count_out - 1;
+    21                                               end
+    22                                               
+    23              1                        175     assign if_t.max_count = (if_t.count_out == {if_t.WIDTH{1'b1}})? 1:0;
+    24              1                        175     assign if_t.zero = (if_t.count_out == 0)? 1:0;
+    25                                               
+    26                                               endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                        10        10         0     100.0
+
+================================Branch Details================================
+
+Branch Coverage for file counter.sv --
+
+------------------------------------IF Branch------------------------------------
+    12                                       212     Count coming in to IF
+    12              1                         24         if (!if_t.rst_n)
+    14              1                        134         else if (!if_t.load_n)
+    16              1                         37         else if (if_t.ce)
+                                              17     All False Count
+Branch totals: 4 hits of 4 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    17                                        37     Count coming in to IF
+    17              1                         18             if (if_t.up_down)
+    19              1                         19             else 
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    23                                       174     Count coming in to IF
+    23              1                          6     assign if_t.max_count = (if_t.count_out == {if_t.WIDTH{1'b1}})? 1:0;
+    23              2                        168     assign if_t.max_count = (if_t.count_out == {if_t.WIDTH{1'b1}})? 1:0;
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    24                                       174     Count coming in to IF
+    24              1                         18     assign if_t.zero = (if_t.count_out == 0)? 1:0;
+    24              2                        156     assign if_t.zero = (if_t.count_out == 0)? 1:0;
+Branch totals: 2 hits of 2 branches = 100.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File counter.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+=================================================================================
+=== File: counter_tb.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           17        17         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file counter_tb.sv --
+
+    1                                                import pack::*;
+    2                                                module counter_tb(if_counter if_t);
+    3                                                
+    4               1                          1     transaction tr=new();
+    5                                                
+    6               1                        403     always_comb begin tr.clk=if_t.clk; end
+    6               2                        403     
+    7                                                
+    8                                                initial begin
+    9                                                
+    10              1                          1         if_t.rst_n=0;
+    11              1                          1         @(negedge if_t.clk);
+    12              1                        200         repeat(200)begin
+    13                                                       assert (tr.randomize());
+    14              1                        200     	    if_t.rst_n=tr.rst_n;
+    15              1                        200             if_t.load_n=tr.load_n;
+    16              1                        200             if_t.up_down=tr.up_down;
+    17              1                        200             if_t.ce=tr.ce;
+    18              1                        200             if_t.data_load=tr.data_load ;
+    19              1                        200             tr.count_out=if_t.count_out;
+    20              1                        200             tr.max_count=if_t.max_count;
+    21              1                        200             tr.zero=if_t.zero;
+    22              1                        200             @(negedge if_t.clk);#1;
+    22              2                        200     
+    23                                                   end
+    24                                               
+    25              1                          1     $stop;
+    26                                               end
+    27                                               endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         0         0         0     100.0
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File counter_tb.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+=================================================================================
+=== File: if_counter.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            0         0         0     100.0
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         0         0         0     100.0
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                     30        30         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File if_counter.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+          8                                    clk           1           1      100.00 
+         11                                up_down           1           1      100.00 
+         11                                  rst_n           1           1      100.00 
+         11                                 load_n           1           1      100.00 
+         11                                     ce           1           1      100.00 
+         12                           data_load[3]           1           1      100.00 
+         12                           data_load[2]           1           1      100.00 
+         12                           data_load[1]           1           1      100.00 
+         12                           data_load[0]           1           1      100.00 
+         13                           count_out[3]           1           1      100.00 
+         13                           count_out[2]           1           1      100.00 
+         13                           count_out[1]           1           1      100.00 
+         13                           count_out[0]           1           1      100.00 
+         14                                   zero           1           1      100.00 
+         14                              max_count           1           1      100.00 
+
+Total Node Count     =         15 
+Toggled Node Count   =         15 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (30 of 30 bins)
+
+=================================================================================
+=== File: pack.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            1         1         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file pack.sv --
+
+    1                                                package pack;
+    2                                                    parameter WIDTH=4;
+    3                                                    class transaction;
+    4                                                    
+    5                                                    rand bit rst_n,load_n,up_down,ce;
+    6                                                    rand bit [WIDTH-1:0] data_load;
+    7                                                    bit [WIDTH-1:0] count_out;
+    8                                                    bit zero,max_count,clk;
+    9                                                    constraint x {
+    10                                                       rst_n dist {0:=5,1:=100};
+    11                                                       load_n dist {0:=70,1:=30};
+    12                                                       ce dist {1:=70,0:=30};
+    13                                                   }
+    14                                                   covergroup covgup @(posedge clk) ;
+    15                                                       coverpoint data_load iff(!load_n);
+    16                                                       COUNT_UP:coverpoint count_out iff(rst_n && ce && up_down){
+    17                                                           bins all_values_up[]={[0:15]};
+    18                                                           bins trans_zero=(15=>0);
+    19                                                       }
+    20                                                       COUNT_DOWN:coverpoint count_out iff(rst_n && ce && !up_down){
+    21                                                           bins all_values_down[]={[0:15]};
+    22                                                           bins trans_max=(0=>15);
+    23                                                       }
+    24                                                       max_check :cross count_out,max_count{
+    25                                                           option.cross_auto_bin_max=0;
+    26                                                           bins max_detect=binsof(count_out) intersect{15} && binsof(max_count) intersect {1};
+    27                                                           illegal_bins invalid=binsof(count_out) intersect{[0:14]} && binsof(max_count) intersect {1};
+    28                                                       }
+    29                                                       zeros_check :cross count_out,zero{
+    30                                                           option.cross_auto_bin_max=0;
+    31                                                           bins zero_detect=binsof(count_out) intersect{0} && binsof(zero) intersect {1};
+    32                                                           illegal_bins invalid=binsof(count_out) intersect{[1:15]} && binsof(zero) intersect {1};
+    33                                                       }
+    34                                                   endgroup 
+    35                                               
+    36                                               
+    37                                               
+    38                                               
+    39                                                   function new();
+    40              1                          1            covgup=new();
+    41                                                   endfunction
+    42                                                       
+    43                                               endclass 
+    44                                               endpackage
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         0         0         0     100.0
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File pack.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+=================================================================================
+=== File: top.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            3         3         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file top.sv --
+
+    1                                                
+    2                                                module top();
+    3                                                
+    4                                                bit clk=0;
+    5                                                
+    6                                                initial begin
+    7               1                          1     forever 
+    8                                                    begin
+    9               1                        403             #100 clk =!clk; 
+    9               2                        402     
+    10                                                   end  
+    11                                               end
+    12                                               
+    13                                               
+    14                                               if_counter if_t(clk);
+    15                                               counter dut(if_t);
+    16                                               counter_tb tb(if_t);
+    17                                               bind counter asser SVA(if_t);
+    18                                               
+    19                                               endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         0         0         0     100.0
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      2         2         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File top.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+          4                                    clk           1           1      100.00 
+
+Total Node Count     =          1 
+Toggled Node Count   =          1 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (2 of 2 bins)
+
+COVERGROUP COVERAGE:
+-----------------------------------------------------------------------------------------------
+Covergroup                                             Metric       Goal    Status               
+                                                                                              
+-----------------------------------------------------------------------------------------------
+ TYPE /pack/transaction/covgup                         100.0%        100    Covered              
+    covered/total bins:                                    72         72                      
+    missing/total bins:                                     0         72                      
+    % Hit:                                             100.0%        100                      
+    Coverpoint covgup::data_load                       100.0%        100    Covered              
+        covered/total bins:                                16         16                      
+        missing/total bins:                                 0         16                      
+        % Hit:                                         100.0%        100                      
+    Coverpoint covgup::COUNT_UP                        100.0%        100    Covered              
+        covered/total bins:                                17         17                      
+        missing/total bins:                                 0         17                      
+        % Hit:                                         100.0%        100                      
+    Coverpoint covgup::COUNT_DOWN                      100.0%        100    Covered              
+        covered/total bins:                                17         17                      
+        missing/total bins:                                 0         17                      
+        % Hit:                                         100.0%        100                      
+    Coverpoint covgup::count_out                       100.0%        100    Covered              
+        covered/total bins:                                16         16                      
+        missing/total bins:                                 0         16                      
+        % Hit:                                         100.0%        100                      
+    Coverpoint covgup::zero                            100.0%        100    Covered              
+        covered/total bins:                                 2          2                      
+        missing/total bins:                                 0          2                      
+        % Hit:                                         100.0%        100                      
+    Coverpoint covgup::max_count                       100.0%        100    Covered              
+        covered/total bins:                                 2          2                      
+        missing/total bins:                                 0          2                      
+        % Hit:                                         100.0%        100                      
+    Cross covgup::max_check                            100.0%        100    Covered              
+        covered/total bins:                                 1          1                      
+        missing/total bins:                                 0          1                      
+        % Hit:                                         100.0%        100                      
+    Cross covgup::zeros_check                          100.0%        100    Covered              
+        covered/total bins:                                 1          1                      
+        missing/total bins:                                 0          1                      
+        % Hit:                                         100.0%        100                      
+ CLASS transaction
+ Covergroup instance \/pack::transaction::covgup       100.0%        100    Covered              
+    covered/total bins:                                    72         72                      
+    missing/total bins:                                     0         72                      
+    % Hit:                                             100.0%        100                      
+    Coverpoint data_load                               100.0%        100    Covered              
+        covered/total bins:                                16         16                      
+        missing/total bins:                                 0         16                      
+        % Hit:                                         100.0%        100                      
+        bin auto[0]                                        11          1    Covered              
+        bin auto[1]                                         9          1    Covered              
+        bin auto[2]                                        11          1    Covered              
+        bin auto[3]                                        10          1    Covered              
+        bin auto[4]                                        10          1    Covered              
+        bin auto[5]                                        15          1    Covered              
+        bin auto[6]                                        17          1    Covered              
+        bin auto[7]                                         6          1    Covered              
+        bin auto[8]                                         7          1    Covered              
+        bin auto[9]                                         5          1    Covered              
+        bin auto[10]                                       10          1    Covered              
+        bin auto[11]                                        5          1    Covered              
+        bin auto[12]                                       11          1    Covered              
+        bin auto[13]                                        7          1    Covered              
+        bin auto[14]                                        8          1    Covered              
+        bin auto[15]                                        3          1    Covered              
+    Coverpoint COUNT_UP                                100.0%        100    Covered              
+        covered/total bins:                                17         17                      
+        missing/total bins:                                 0         17                      
+        % Hit:                                         100.0%        100                      
+        bin all_values_up[0]                               10          1    Covered              
+        bin all_values_up[1]                                6          1    Covered              
+        bin all_values_up[2]                                5          1    Covered              
+        bin all_values_up[3]                                4          1    Covered              
+        bin all_values_up[4]                                4          1    Covered              
+        bin all_values_up[5]                                6          1    Covered              
+        bin all_values_up[6]                                9          1    Covered              
+        bin all_values_up[7]                                2          1    Covered              
+        bin all_values_up[8]                                2          1    Covered              
+        bin all_values_up[9]                                3          1    Covered              
+        bin all_values_up[10]                               2          1    Covered              
+        bin all_values_up[11]                               3          1    Covered              
+        bin all_values_up[12]                               6          1    Covered              
+        bin all_values_up[13]                               3          1    Covered              
+        bin all_values_up[14]                               2          1    Covered              
+        bin all_values_up[15]                               3          1    Covered              
+        bin trans_zero                                      1          1    Covered              
+    Coverpoint COUNT_DOWN                              100.0%        100    Covered              
+        covered/total bins:                                17         17                      
+        missing/total bins:                                 0         17                      
+        % Hit:                                         100.0%        100                      
+        bin all_values_down[0]                              9          1    Covered              
+        bin all_values_down[1]                              8          1    Covered              
+        bin all_values_down[2]                              7          1    Covered              
+        bin all_values_down[3]                              5          1    Covered              
+        bin all_values_down[4]                              4          1    Covered              
+        bin all_values_down[5]                              8          1    Covered              
+        bin all_values_down[6]                              3          1    Covered              
+        bin all_values_down[7]                              2          1    Covered              
+        bin all_values_down[8]                              1          1    Covered              
+        bin all_values_down[9]                              1          1    Covered              
+        bin all_values_down[10]                             4          1    Covered              
+        bin all_values_down[11]                             2          1    Covered              
+        bin all_values_down[12]                             6          1    Covered              
+        bin all_values_down[13]                             3          1    Covered              
+        bin all_values_down[14]                             2          1    Covered              
+        bin all_values_down[15]                             2          1    Covered              
+        bin trans_max                                       1          1    Covered              
+    Coverpoint count_out                               100.0%        100    Covered              
+        covered/total bins:                                16         16                      
+        missing/total bins:                                 0         16                      
+        % Hit:                                         100.0%        100                      
+        bin auto[0]                                        26          1    Covered              
+        bin auto[1]                                        15          1    Covered              
+        bin auto[2]                                        16          1    Covered              
+        bin auto[3]                                         9          1    Covered              
+        bin auto[4]                                        14          1    Covered              
+        bin auto[5]                                        25          1    Covered              
+        bin auto[6]                                        18          1    Covered              
+        bin auto[7]                                         9          1    Covered              
+        bin auto[8]                                         8          1    Covered              
+        bin auto[9]                                         6          1    Covered              
+        bin auto[10]                                       10          1    Covered              
+        bin auto[11]                                        6          1    Covered              
+        bin auto[12]                                       13          1    Covered              
+        bin auto[13]                                        8          1    Covered              
+        bin auto[14]                                       12          1    Covered              
+        bin auto[15]                                        6          1    Covered              
+    Coverpoint zero                                    100.0%        100    Covered              
+        covered/total bins:                                 2          2                      
+        missing/total bins:                                 0          2                      
+        % Hit:                                         100.0%        100                      
+        bin auto[0]                                       176          1    Covered              
+        bin auto[1]                                        25          1    Covered              
+    Coverpoint max_count                               100.0%        100    Covered              
+        covered/total bins:                                 2          2                      
+        missing/total bins:                                 0          2                      
+        % Hit:                                         100.0%        100                      
+        bin auto[0]                                       195          1    Covered              
+        bin auto[1]                                         6          1    Covered              
+    Cross max_check                                    100.0%        100    Covered              
+        covered/total bins:                                 1          1                      
+        missing/total bins:                                 0          1                      
+        % Hit:                                         100.0%        100                      
+        illegal_bin invalid                                 0               ZERO                 
+        bin max_detect                                      6          1    Covered              
+    Cross zeros_check                                  100.0%        100    Covered              
+        covered/total bins:                                 1          1                      
+        missing/total bins:                                 0          1                      
+        % Hit:                                         100.0%        100                      
+        illegal_bin invalid                                 0               ZERO                 
+        bin zero_detect                                    25          1    Covered              
+
+TOTAL COVERGROUP COVERAGE: 100.0%  COVERGROUP TYPES: 1
+
+DIRECTIVE COVERAGE:
+---------------------------------------------------------------------------------------------
+Name                                     Design Design   Lang File(Line)      Count Status    
+                                         Unit   UnitType                                      
+---------------------------------------------------------------------------------------------
+/top/dut/SVA/reset_cover                 asser  Verilog  SVA  asser.sv(33)       11 Covered   
+/top/dut/SVA/load_cover                  asser  Verilog  SVA  asser.sv(48)      134 Covered   
+/top/dut/SVA/turn_off_all_cover          asser  Verilog  SVA  asser.sv(49)       17 Covered   
+/top/dut/SVA/count_up_cover              asser  Verilog  SVA  asser.sv(50)       18 Covered   
+/top/dut/SVA/count_down_cover            asser  Verilog  SVA  asser.sv(51)       19 Covered   
+/top/dut/SVA/maximum_cover               asser  Verilog  SVA  asser.sv(52)        6 Covered   
+/top/dut/SVA/minimum_cover               asser  Verilog  SVA  asser.sv(53)       13 Covered   
+
+TOTAL DIRECTIVE COVERAGE: 100.0%  COVERS: 7
+
+ASSERTION RESULTS:
+-------------------------------------------------------
+Name                 File(Line)           Failure Pass 
+                                          Count   Count 
+-------------------------------------------------------
+/top/dut/SVA/rst_check
+                     asser.sv(32)               0     1
+/top/dut/SVA/load_assert
+                     asser.sv(40)               0     1
+/top/dut/SVA/turn_off_all_assert
+                     asser.sv(41)               0     1
+/top/dut/SVA/count_up_assert
+                     asser.sv(42)               0     1
+/top/dut/SVA/count_down_assert
+                     asser.sv(43)               0     1
+/top/dut/SVA/maximum_assert
+                     asser.sv(44)               0     1
+/top/dut/SVA/minimum_assert
+                     asser.sv(45)               0     1
+/top/tb/#ublk#95084642#12/immed__13
+                     counter_tb.sv(13)          0     1
+
+Total Coverage By File (code coverage only, filtered view): 100.0%
+

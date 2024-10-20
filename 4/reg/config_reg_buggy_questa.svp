@@ -1,0 +1,35 @@
+  module config_reg(
+		input  logic clk,
+		input  logic reset,
+		input  logic write,
+		input  logic [15:0] data_in,
+		input  logic [2:0] address,
+		output logic [15:0] data_out
+);
+
+`protected
+
+    MTI!#DU;Wt7W\E}vp$.h,RJ@F"cok2*:fU|]?KQ7"kDn2YBkJW1x7+D][a92\T\Xo+#4'mT1<VEU
+    Y>-jEo-mnC;onUwzW]kB*s~TBlVA61@Ba}+7?|,5XoUXY[@7?]AEK#5u2[,vCY?5WACBAkE-5Q<A
+    \1das*pl7+WpVrAz@eu$WA{ebXUv5TrV[v$A1+IB~*kJK~TXv^VW@]DQ]uzjv(G,i{LY]DZ$4^O,
+    {cQ#=]/_xJpe_kwG?wE4qLAR5TU$3sI(^E#*,iTK7'RVBKXe\YOiZwxmlmAjGo2]1_1uC2}##l#I
+    P#a7n^|e1lLPZ*l[3rTr=iEkb@T>J-pmux,$Z.\vQ2[-lJajw\sjirkh-'$[Ko7r*\?+$WWAB_~,
+    ?e_<@'aB.a=Yi7aXRznB;\7ou~=!OV-p2^mDDu'sRiAn!m[J{Ho#-e1=Y7VDVT[G?v=$nL[:Kaw!
+    EZTH}xUz5KaliVG][KZ2evwm~|tZIk3xeGs2o[GG]p[BAw!w>eQaTz*R1#TxX{n>^}!EC$ekE#Z7
+    ,B5sWuxN^H\2w>3Y=2El3}xW2xWQk5[#Qviz*w1@s+^\UYY=-_nUw5s@-V2B-CjTp]Rw)e<UawXJ
+    3+H*vpW@U{x{$R@W^$>,]E$v#BR{a+,uWuA}WxQ}X'JX[O5xkbl#B#/Dxo[*wV,FqZXmAy=I-\^n
+    Br*@5+[Jzoh,$11KG>^9J*e~Hr?'TCNH}Bw~1[u@e$u>Q23#BR'$Wxl_]IpI*{J5?OKDrHkA$GsG
+    a<j^D{*'Q^XzeaXL$Bsow<3*5lXBz*W*Z$CXMPK^zCvpDU5DT1aTJ=_Das=>o-TCs?aDE1}U5irC
+    <A,~vQi}QOuo;!VY@]C-+ROh'?\Ku'pxvE!2(.Ss3JD'Q'eD?Esjp^[6]Z+u3n1]1urmi}@$eiDk
+    l2\+73l-ExuR,n<*I!oW^;1BE;*DBxTpVWXBhq][<}=KoTyU>2jsY}R!U[sD+O>_{1U^Ev!27T\Y
+    s}1q*$5T6kv!!hLEIwsx'CXe#GeQ*Y'[OvRkpr\a1oxGHpoW'lj}xRpjG!oTem?Q,mIp'7^11G]p
+    A*mTLj;;\jrV[V*ps_T*jdrBX]tKE?X#n@<W[kp5XH]FNWoTBC]]Ud;5D[?][5D15}Tt_{]o#-Q*
+    ^ep=(IH<oPD}QBJr<1p-'{sm5z@HBG,#rCiEQY}_1r[>;rr]u,wCKpGu}*w>lvvBr#j>s3Bz^I2x
+    <\jOW1@Ii!H^[;!R=[}7iu=Z[am[jT>B>IkYmQVyG0,VAQ\E\[Y2*RR=w}o_O$BwT$I3G_OI[HT'
+    3v@DZH1kp'@H0~EoI"'Kj3Wo'3*={jE$m*bo_}xBVs]E[psIrjABY+s]usrsi!\L#_#J/Vm\HVCe
+    <o}K]@5,Yo!+Re77K>G-'^#si7;KBo[a@=i
+`endprotected
+  
+
+endmodule // test
+
