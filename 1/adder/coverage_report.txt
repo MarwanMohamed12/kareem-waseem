@@ -1,0 +1,98 @@
+Coverage Report by file with details
+
+=================================================================================
+=== File: adder.v
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            3         3         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file adder.v --
+
+    1                                                module adder (
+    2                                                    input  clk,
+    3                                                    input  reset,
+    4                                                    input  signed [3:0] A,	// Input data A in 2's complement
+    5                                                    input  signed [3:0] B,	// Input data B in 2's complement
+    6                                                    output reg signed [4:0] C // Adder output in 2's complement
+    7                                                		  );
+    8                                                
+    9                                                   // Register output C
+    10              1                         13        always @(posedge clk or posedge reset) begin
+    11                                                     if (reset)
+    12              1                          4     	     C <= 5'b0;
+    13                                                     else
+    14              1                          9     	     C <= A + B;
+    15                                                  end
+    16                                               
+    17                                               endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         2         2         0     100.0
+
+================================Branch Details================================
+
+Branch Coverage for file adder.v --
+
+------------------------------------IF Branch------------------------------------
+    11                                        13     Count coming in to IF
+    11              1                          4           if (reset)
+    13              1                          9           else
+Branch totals: 2 hits of 2 branches = 100.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                     30        30         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File adder.v --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+          2                                    clk           1           1      100.00 
+          3                                  reset           1           1      100.00 
+          4                                   A[3]           1           1      100.00 
+          4                                   A[2]           1           1      100.00 
+          4                                   A[1]           1           1      100.00 
+          4                                   A[0]           1           1      100.00 
+          5                                   B[3]           1           1      100.00 
+          5                                   B[2]           1           1      100.00 
+          5                                   B[1]           1           1      100.00 
+          5                                   B[0]           1           1      100.00 
+          6                                   C[4]           1           1      100.00 
+          6                                   C[3]           1           1      100.00 
+          6                                   C[2]           1           1      100.00 
+          6                                   C[1]           1           1      100.00 
+          6                                   C[0]           1           1      100.00 
+
+Total Node Count     =         15 
+Toggled Node Count   =         15 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (30 of 30 bins)
+
+
+Total Coverage By File (code coverage only, filtered view): 100.0%
+
