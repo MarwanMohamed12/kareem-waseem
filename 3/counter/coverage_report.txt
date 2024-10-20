@@ -1,0 +1,672 @@
+Coverage Report by file with details
+
+=================================================================================
+=== File: all_item.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            1         1         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file all_item.sv --
+
+    1                                                package all_item;
+    2                                                    parameter WIDTH=4;
+    3                                                    class transaction;
+    4                                                    
+    5                                                    rand bit rst_n,load_n,up_down,ce;
+    6                                                    rand bit [WIDTH-1:0] data_load;
+    7                                                    bit clk;
+    8                                                    logic [WIDTH-1:0] count_out;
+    9                                                
+    10                                                   constraint x {
+    11                                                       rst_n dist {0:=5,1:=95};
+    12                                                       load_n dist {0:=70,1:=30};
+    13                                                       ce dist {1:=70,0:=30};
+    14                                                   }
+    15                                               
+    16                                                   covergroup covgup @(posedge clk);
+    17                                                       coverpoint data_load iff(!load_n);
+    18                                                       CO1:coverpoint count_out iff(rst_n && ce && up_down){
+    19                                                           bins all_values_up[]={[0:15]};
+    20                                                           bins trans_zero=(15=>0);
+    21                                                       }
+    22                                                       CO2:coverpoint count_out iff(rst_n && ce && !up_down){
+    23                                                           bins all_values_down[]={[0:15]};
+    24                                                           bins trans_max=(0=>15);
+    25                                                       }
+    26                                                   endgroup
+    27                                               
+    28                                                   function new();
+    29              1                          1             covgup=new();
+    30                                                   endfunction
+    31                                               
+    32                                                   /*function printing;
+    33                                                       $display("count_out=%0d  , max_count=%0d, zero=%0d",count_out,max_count,zero);
+    34                                                   endfunction*/
+    35                                                       
+    36                                               endclass 
+    37                                               endpackage
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         0         0         0     100.0
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File all_item.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+=================================================================================
+=== File: counter.v
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            7         7         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file counter.v --
+
+    1                                                ////////////////////////////////////////////////////////////////////////////////
+    2                                                // Author: Kareem Waseem
+    3                                                // Course: Digital Verification using SV & UVM
+    4                                                //
+    5                                                // Description: Counter Design 
+    6                                                // 
+    7                                                ////////////////////////////////////////////////////////////////////////////////
+    8                                                
+    9                                                module counter (clk ,rst_n, load_n, up_down, ce, data_load, count_out, max_count, zero);
+    10                                               parameter WIDTH = 4;
+    11                                               input clk;
+    12                                               input rst_n;
+    13                                               input load_n;
+    14                                               input up_down;
+    15                                               input ce;
+    16                                               input [WIDTH-1:0] data_load;
+    17                                               output reg [WIDTH-1:0] count_out;
+    18                                               output max_count;
+    19                                               output zero;
+    20                                               
+    21              1                        500     always @(posedge clk) begin
+    22                                                   if (!rst_n)
+    23              1                         21             count_out <= 0;
+    24                                                   else if (!load_n)
+    25              1                        353             count_out <= data_load;
+    26                                                   else if (ce)
+    27                                                       if (up_down)
+    28              1                         43                 count_out <= count_out + 1;
+    29                                                       else 
+    30              1                         39                 count_out <= count_out - 1;
+    31                                               end
+    32                                               
+    33              1                        434     assign max_count = (count_out == {WIDTH{1'b1}})? 1:0;
+    34              1                        434     assign zero = (count_out == 0)? 1:0;
+    35                                               
+    36                                               endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                        10        10         0     100.0
+
+================================Branch Details================================
+
+Branch Coverage for file counter.v --
+
+------------------------------------IF Branch------------------------------------
+    22                                       500     Count coming in to IF
+    22              1                         21         if (!rst_n)
+    24              1                        353         else if (!load_n)
+    26              1                         82         else if (ce)
+                                              44     All False Count
+Branch totals: 4 hits of 4 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    27                                        82     Count coming in to IF
+    27              1                         43             if (up_down)
+    29              1                         39             else 
+Branch totals: 2 hits of 2 branches = 100.0%
+
+--------------------------------------IF Branch------------------------------------
+    33                                       433     Count coming in to IF
+    33              1                         21     assign max_count = (count_out == {WIDTH{1'b1}})? 1:0;
+    33              2                        412     assign max_count = (count_out == {WIDTH{1'b1}})? 1:0;
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    34                                       433     Count coming in to IF
+    34              1                         45     assign zero = (count_out == 0)? 1:0;
+    34              2                        388     assign zero = (count_out == 0)? 1:0;
+Branch totals: 2 hits of 2 branches = 100.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                     30        30         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File counter.v --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+         11                                    clk           1           1      100.00 
+         12                                  rst_n           1           1      100.00 
+         13                                 load_n           1           1      100.00 
+         14                                up_down           1           1      100.00 
+         15                                     ce           1           1      100.00 
+         16                           data_load[3]           1           1      100.00 
+         16                           data_load[2]           1           1      100.00 
+         16                           data_load[1]           1           1      100.00 
+         16                           data_load[0]           1           1      100.00 
+         17                           count_out[3]           1           1      100.00 
+         17                           count_out[2]           1           1      100.00 
+         17                           count_out[1]           1           1      100.00 
+         17                           count_out[0]           1           1      100.00 
+         18                              max_count           1           1      100.00 
+         19                                   zero           1           1      100.00 
+
+Total Node Count     =         15 
+Toggled Node Count   =         15 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (30 of 30 bins)
+
+=================================================================================
+=== File: counter_tb.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           38        24        14      63.1
+
+================================Statement Details================================
+
+Statement Coverage for file counter_tb.sv --
+
+    1                                                import all_item::*;
+    2                                                
+    3                                                int error=0,correct =0;
+    4                                                
+    5                                                module counter_tb();
+    6                                                
+    7                                                logic clk=1,rst_n,load_n,up_down,ce;
+    8                                                logic  [WIDTH-1:0] data_load;
+    9                                                logic  [WIDTH-1:0] count_out;
+    10                                               logic max_count,zero;
+    11                                               bit[3:0] last_value=0;
+    12                                               counter co(.*);
+    13                                               
+    14                                               initial begin
+    15              1                          1     forever begin#5 clk=!clk;
+    15              2                       1002     
+    15              3                       1001     
+    16              1                       1001     tr.clk=clk;
+    17                                               end
+    18                                               end
+    19                                               
+    20              1                          1     transaction tr=new();
+    21                                               
+    22                                               initial begin
+    23              1                          1         rst_n=0;
+    24              1                          1         test();
+    25              1                        500         repeat(500)begin
+    26                                                       assert (tr.randomize() );
+    27              1                        500     	    rst_n=tr.rst_n;
+    28              1                        500             load_n=tr.load_n;
+    29              1                        500             up_down=tr.up_down;
+    30              1                        500             ce=tr.ce;
+    31              1                        500             data_load=tr.data_load ;
+    32              1                        500             tr.count_out=count_out;
+    33              1                        500             test();
+    34                                               
+    35                                                     // tr.printing();
+    36                                                   end
+    37              1                          1         $display("number of correct =%0d ,error=%0d",correct,error);
+    38              1                          1     $finish;
+    39                                               end
+    40                                               
+    41                                               task test();
+    42                                                  /* @(posedge clk);
+    43                                                   tr.count_out=count_out;*/
+    44              1                        501         @(negedge clk);
+    45                                                   if (rst_n==0) begin
+    46                                                       if(count_out!=0 || zero!=1 || max_count!=0)begin
+    47              1                    ***0***                 $display("@%0t there is problem in reset",$time);error++;
+    47              2                    ***0***     
+    48                                                       end
+    49              1                         21             else correct++;
+    50                                                   end
+    51                                                   else begin
+    52                                                       if (load_n==0)begin //check on load case 
+    53                                                           if(data_load==0  && (count_out!=0 || max_count!=0 || zero!=1))begin
+    54              1                    ***0***                     $display("@%0t there is problem in zero case ",$time); error++;
+    54              2                    ***0***     
+    55                                                           end
+    56                                                           else if (data_load==15 && (count_out!=15 || max_count!=1 || zero!=0) )begin
+    57              1                    ***0***                         $display("@%0t there is problem in max case ",$time);error++;
+    57              2                    ***0***     
+    58                                                           end
+    59                                                           else if (count_out!=data_load )begin
+    60              1                    ***0***                         $display("@%0t there is problem in loading ",$time);error++;
+    60              2                    ***0***     
+    61                                                           end
+    62              1                        353                 else  correct++;
+    63                                                       end 
+    64                                                       else begin
+    65                                                           if (ce)begin
+    66                                                               if ((up_down==1 && count_out!=last_value+4'b0001) || 
+    67                                                                   (up_down==1 && last_value==14 && max_count!=1) || (up_down==1 && last_value==15 && zero!=1) )begin
+    68              1                    ***0***                             $display("@%0t there is problem in count up ",$time);error++;
+    68              2                    ***0***     
+    69                                                               end
+    70                                                               else if ((up_down==0 && count_out!=last_value-4'b0001) ||
+    71                                                                        (up_down==0 && last_value==0 && max_count!=1) || (up_down==0 && last_value==1 && zero!=1) )begin
+    72              1                    ***0***                             $display("@%0t there is problem in count down and value =%0d",$time,(last_value-4'b0001));error++;
+    72              2                    ***0***     
+    73                                                               end 
+    74              1                         82                     else correct++;
+    75                                                           end
+    76                                                           else 
+    77                                                               if(!ce )begin
+    78                                                                   if(count_out!=last_value)begin
+    79              1                    ***0***                             $display("@%0t there is problem in enaple ",$time);error++;
+    79              2                    ***0***     
+    80                                                                   end
+    81                                                                   else
+    82                                                                   begin 
+    83              1                         45                             correct++;
+    84                                                                   end
+    85                                                               end
+    86                                                       end
+    87                                                   end
+    88                                                   
+    89              1                        501         last_value=count_out;
+    90                                               
+    91              1                        501     	#1;
+    92                                               endtask
+    93                                               
+    94                                               
+    95                                               
+    96                                               endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                        18        10         8      55.5
+
+================================Branch Details================================
+
+Branch Coverage for file counter_tb.sv --
+
+------------------------------------IF Branch------------------------------------
+    45                                       501     Count coming in to IF
+    45              1                         21         if (rst_n==0) begin
+    51              1                        480         else begin
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    46                                        21     Count coming in to IF
+    46              1                    ***0***             if(count_out!=0 || zero!=1 || max_count!=0)begin
+    49              1                         21             else correct++;
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    52                                       480     Count coming in to IF
+    52              1                        353             if (load_n==0)begin //check on load case 
+    64              1                        127             else begin
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    53                                       353     Count coming in to IF
+    53              1                    ***0***                 if(data_load==0  && (count_out!=0 || max_count!=0 || zero!=1))begin
+    56              1                    ***0***                 else if (data_load==15 && (count_out!=15 || max_count!=1 || zero!=0) )begin
+    59              1                    ***0***                 else if (count_out!=data_load )begin
+    62              1                        353                 else  correct++;
+Branch totals: 1 hit of 4 branches = 25.0%
+
+------------------------------------IF Branch------------------------------------
+    65                                       127     Count coming in to IF
+    65              1                         82                 if (ce)begin
+    77              1                         45                     if(!ce )begin
+                                         ***0***     All False Count
+Branch totals: 2 hits of 3 branches = 66.6%
+
+------------------------------------IF Branch------------------------------------
+    66                                        82     Count coming in to IF
+    66              1                    ***0***                     if ((up_down==1 && count_out!=last_value+4'b0001) || 
+    70              1                    ***0***                     else if ((up_down==0 && count_out!=last_value-4'b0001) ||
+    74              1                         82                     else correct++;
+Branch totals: 1 hit of 3 branches = 33.3%
+
+------------------------------------IF Branch------------------------------------
+    78                                        45     Count coming in to IF
+    78              1                    ***0***                         if(count_out!=last_value)begin
+    81              1                         45                         else
+Branch totals: 1 hit of 2 branches = 50.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms             23         0        23       0.0
+
+================================Condition Details================================
+
+Condition Coverage for file counter_tb.sv --
+
+----------------Focused Condition View-------------------
+Line       46 Item    1  (((count_out != 0) || (zero != 1)) || (max_count != 0))
+Condition totals: 0 of 3 input terms covered = 0.0%
+
+        Input Term   Covered  Reason for no coverage   Hint
+       -----------  --------  -----------------------  --------------
+  (count_out != 0)         N  '_1' not hit             Hit '_1'
+       (zero != 1)         N  '_1' not hit             Hit '_1'
+  (max_count != 0)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (count_out != 0)_0    (~(max_count != 0) && ~(zero != 1))
+  Row   2:    ***0***  (count_out != 0)_1    -                             
+  Row   3:          1  (zero != 1)_0         (~(max_count != 0) && ~(count_out != 0))
+  Row   4:    ***0***  (zero != 1)_1         ~(count_out != 0)             
+  Row   5:          1  (max_count != 0)_0    ~((count_out != 0) || (zero != 1))
+  Row   6:    ***0***  (max_count != 0)_1    ~((count_out != 0) || (zero != 1))
+
+----------------Focused Condition View-------------------
+Line       53 Item    1  ((data_load == 0) && (((count_out != 0) || (max_count != 0)) || (zero != 1)))
+Condition totals: 0 of 4 input terms covered = 0.0%
+
+        Input Term   Covered  Reason for no coverage   Hint
+       -----------  --------  -----------------------  --------------
+  (data_load == 0)         N  '_1' not hit             Hit '_1'
+  (count_out != 0)         N  '_1' not hit             Hit '_1'
+  (max_count != 0)         N  '_1' not hit             Hit '_1'
+       (zero != 1)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (data_load == 0)_0    -                             
+  Row   2:    ***0***  (data_load == 0)_1    (((count_out != 0) || (max_count != 0)) || (zero != 1))
+  Row   3:          1  (count_out != 0)_0    ((data_load == 0) && ~(zero != 1) && ~(max_count != 0))
+  Row   4:    ***0***  (count_out != 0)_1    (data_load == 0)              
+  Row   5:          1  (max_count != 0)_0    ((data_load == 0) && ~(zero != 1) && ~(count_out != 0))
+  Row   6:    ***0***  (max_count != 0)_1    ((data_load == 0) && ~(count_out != 0))
+  Row   7:          1  (zero != 1)_0         ((data_load == 0) && ~((count_out != 0) || (max_count != 0)))
+  Row   8:    ***0***  (zero != 1)_1         ((data_load == 0) && ~((count_out != 0) || (max_count != 0)))
+
+----------------Focused Condition View-------------------
+Line       56 Item    1  ((data_load == 15) && (((count_out != 15) || (max_count != 1)) || (zero != 0)))
+Condition totals: 0 of 4 input terms covered = 0.0%
+
+         Input Term   Covered  Reason for no coverage   Hint
+        -----------  --------  -----------------------  --------------
+  (data_load == 15)         N  '_1' not hit             Hit '_1'
+  (count_out != 15)         N  '_1' not hit             Hit '_1'
+   (max_count != 1)         N  '_1' not hit             Hit '_1'
+        (zero != 0)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  (data_load == 15)_0   -                             
+  Row   2:    ***0***  (data_load == 15)_1   (((count_out != 15) || (max_count != 1)) || (zero != 0))
+  Row   3:          1  (count_out != 15)_0   ((data_load == 15) && ~(zero != 0) && ~(max_count != 1))
+  Row   4:    ***0***  (count_out != 15)_1   (data_load == 15)             
+  Row   5:          1  (max_count != 1)_0    ((data_load == 15) && ~(zero != 0) && ~(count_out != 15))
+  Row   6:    ***0***  (max_count != 1)_1    ((data_load == 15) && ~(count_out != 15))
+  Row   7:          1  (zero != 0)_0         ((data_load == 15) && ~((count_out != 15) || (max_count != 1)))
+  Row   8:    ***0***  (zero != 0)_1         ((data_load == 15) && ~((count_out != 15) || (max_count != 1)))
+
+----------------Focused Condition View-------------------
+Line       66 Item    1  ((((up_down == 1) && (count_out != (last_value + 1))) || (((up_down == 1) && (last_value == 14)) && (max_count != 1))) || (((up_down == 1) && (last_value == 15)) && (zero != 1)))
+Condition totals: 0 of 6 input terms covered = 0.0%
+
+                       Input Term   Covered  Reason for no coverage   Hint
+                      -----------  --------  -----------------------  --------------
+                   (up_down == 1)         N  '_1' not hit             Hit '_1'
+  (count_out != (last_value + 1))         N  '_1' not hit             Hit '_1'
+               (last_value == 14)         N  '_1' not hit             Hit '_1'
+                 (max_count != 1)         N  '_1' not hit             Hit '_1'
+               (last_value == 15)         N  '_1' not hit             Hit '_1'
+                      (zero != 1)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target                         Non-masking condition(s)      
+ ---------  ---------  --------------------               -------------------------     
+  Row   1:          1  (up_down == 1)_0                   -                             
+  Row   2:    ***0***  (up_down == 1)_1                   (count_out != (last_value + 1)), (~((up_down == 1) && (count_out != (last_value + 1))) && (max_count != 1) && (last_value == 14)), (~(((up_down == 1) && (count_out != (last_value + 1))) || (((up_down == 1) && (last_value == 14)) && (max_count != 1))) && (zero != 1) && (last_value == 15))
+  Row   3:          1  (count_out != (last_value + 1))_0  (~(((up_down == 1) && (last_value == 15)) && (zero != 1)) && ~(((up_down == 1) && (last_value == 14)) && (max_count != 1)) && (up_down == 1))
+  Row   4:    ***0***  (count_out != (last_value + 1))_1  (up_down == 1)                
+  Row   5:          1  (last_value == 14)_0               (~(((up_down == 1) && (last_value == 15)) && (zero != 1)) && ~((up_down == 1) && (count_out != (last_value + 1))) && (up_down == 1))
+  Row   6:    ***0***  (last_value == 14)_1               (~((up_down == 1) && (count_out != (last_value + 1))) && (max_count != 1) && (up_down == 1))
+  Row   7:          1  (max_count != 1)_0                 (~(((up_down == 1) && (last_value == 15)) && (zero != 1)) && ~((up_down == 1) && (count_out != (last_value + 1))) && ((up_down == 1) && (last_value == 14)))
+  Row   8:    ***0***  (max_count != 1)_1                 (~((up_down == 1) && (count_out != (last_value + 1))) && ((up_down == 1) && (last_value == 14)))
+  Row   9:          1  (last_value == 15)_0               (~(((up_down == 1) && (count_out != (last_value + 1))) || (((up_down == 1) && (last_value == 14)) && (max_count != 1))) && (up_down == 1))
+ Row   10:    ***0***  (last_value == 15)_1               (~(((up_down == 1) && (count_out != (last_value + 1))) || (((up_down == 1) && (last_value == 14)) && (max_count != 1))) && (zero != 1) && (up_down == 1))
+ Row   11:          1  (zero != 1)_0                      (~(((up_down == 1) && (count_out != (last_value + 1))) || (((up_down == 1) && (last_value == 14)) && (max_count != 1))) && ((up_down == 1) && (last_value == 15)))
+ Row   12:    ***0***  (zero != 1)_1                      (~(((up_down == 1) && (count_out != (last_value + 1))) || (((up_down == 1) && (last_value == 14)) && (max_count != 1))) && ((up_down == 1) && (last_value == 15)))
+
+----------------Focused Condition View-------------------
+Line       70 Item    1  ((((up_down == 0) && (count_out != (last_value - 1))) || (((up_down == 0) && (last_value == 0)) && (max_count != 1))) || (((up_down == 0) && (last_value == 1)) && (zero != 1)))
+Condition totals: 0 of 6 input terms covered = 0.0%
+
+                       Input Term   Covered  Reason for no coverage   Hint
+                      -----------  --------  -----------------------  --------------
+                   (up_down == 0)         N  '_1' not hit             Hit '_1'
+  (count_out != (last_value - 1))         N  '_1' not hit             Hit '_1'
+                (last_value == 0)         N  '_1' not hit             Hit '_1'
+                 (max_count != 1)         N  '_1' not hit             Hit '_1'
+                (last_value == 1)         N  '_1' not hit             Hit '_1'
+                      (zero != 1)         N  '_1' not hit             Hit '_1'
+
+     Rows:       Hits  FEC Target                         Non-masking condition(s)      
+ ---------  ---------  --------------------               -------------------------     
+  Row   1:          1  (up_down == 0)_0                   -                             
+  Row   2:    ***0***  (up_down == 0)_1                   (count_out != (last_value - 1)), (~((up_down == 0) && (count_out != (last_value - 1))) && (max_count != 1) && (last_value == 0)), (~(((up_down == 0) && (count_out != (last_value - 1))) || (((up_down == 0) && (last_value == 0)) && (max_count != 1))) && (zero != 1) && (last_value == 1))
+  Row   3:          1  (count_out != (last_value - 1))_0  (~(((up_down == 0) && (last_value == 1)) && (zero != 1)) && ~(((up_down == 0) && (last_value == 0)) && (max_count != 1)) && (up_down == 0))
+  Row   4:    ***0***  (count_out != (last_value - 1))_1  (up_down == 0)                
+  Row   5:          1  (last_value == 0)_0                (~(((up_down == 0) && (last_value == 1)) && (zero != 1)) && ~((up_down == 0) && (count_out != (last_value - 1))) && (up_down == 0))
+  Row   6:    ***0***  (last_value == 0)_1                (~((up_down == 0) && (count_out != (last_value - 1))) && (max_count != 1) && (up_down == 0))
+  Row   7:          1  (max_count != 1)_0                 (~(((up_down == 0) && (last_value == 1)) && (zero != 1)) && ~((up_down == 0) && (count_out != (last_value - 1))) && ((up_down == 0) && (last_value == 0)))
+  Row   8:    ***0***  (max_count != 1)_1                 (~((up_down == 0) && (count_out != (last_value - 1))) && ((up_down == 0) && (last_value == 0)))
+  Row   9:          1  (last_value == 1)_0                (~(((up_down == 0) && (count_out != (last_value - 1))) || (((up_down == 0) && (last_value == 0)) && (max_count != 1))) && (up_down == 0))
+ Row   10:    ***0***  (last_value == 1)_1                (~(((up_down == 0) && (count_out != (last_value - 1))) || (((up_down == 0) && (last_value == 0)) && (max_count != 1))) && (zero != 1) && (up_down == 0))
+ Row   11:          1  (zero != 1)_0                      (~(((up_down == 0) && (count_out != (last_value - 1))) || (((up_down == 0) && (last_value == 0)) && (max_count != 1))) && ((up_down == 0) && (last_value == 1)))
+ Row   12:    ***0***  (zero != 1)_1                      (~(((up_down == 0) && (count_out != (last_value - 1))) || (((up_down == 0) && (last_value == 0)) && (max_count != 1))) && ((up_down == 0) && (last_value == 1)))
+
+
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                     38        38         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File counter_tb.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+          7                                up_down           1           1      100.00 
+          7                                  rst_n           1           1      100.00 
+          7                                 load_n           1           1      100.00 
+          7                                    clk           1           1      100.00 
+          7                                     ce           1           1      100.00 
+          8                           data_load[3]           1           1      100.00 
+          8                           data_load[2]           1           1      100.00 
+          8                           data_load[1]           1           1      100.00 
+          8                           data_load[0]           1           1      100.00 
+          9                           count_out[3]           1           1      100.00 
+          9                           count_out[2]           1           1      100.00 
+          9                           count_out[1]           1           1      100.00 
+          9                           count_out[0]           1           1      100.00 
+         10                                   zero           1           1      100.00 
+         10                              max_count           1           1      100.00 
+         11                          last_value[3]           1           1      100.00 
+         11                          last_value[2]           1           1      100.00 
+         11                          last_value[1]           1           1      100.00 
+         11                          last_value[0]           1           1      100.00 
+
+Total Node Count     =         19 
+Toggled Node Count   =         19 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (38 of 38 bins)
+
+COVERGROUP COVERAGE:
+-----------------------------------------------------------------------------------------------
+Covergroup                                             Metric       Goal    Status               
+                                                                                              
+-----------------------------------------------------------------------------------------------
+ TYPE /all_item/transaction/covgup                     100.0%        100    Covered              
+    covered/total bins:                                    50         50                      
+    missing/total bins:                                     0         50                      
+    % Hit:                                             100.0%        100                      
+    Coverpoint covgup::data_load                       100.0%        100    Covered              
+        covered/total bins:                                16         16                      
+        missing/total bins:                                 0         16                      
+        % Hit:                                         100.0%        100                      
+    Coverpoint covgup::CO1                             100.0%        100    Covered              
+        covered/total bins:                                17         17                      
+        missing/total bins:                                 0         17                      
+        % Hit:                                         100.0%        100                      
+    Coverpoint covgup::CO2                             100.0%        100    Covered              
+        covered/total bins:                                17         17                      
+        missing/total bins:                                 0         17                      
+        % Hit:                                         100.0%        100                      
+ CLASS transaction
+ Covergroup instance \/all_item::transaction::covgup  
+                                                       100.0%        100    Covered              
+    covered/total bins:                                    50         50                      
+    missing/total bins:                                     0         50                      
+    % Hit:                                             100.0%        100                      
+    Coverpoint data_load                               100.0%        100    Covered              
+        covered/total bins:                                16         16                      
+        missing/total bins:                                 0         16                      
+        % Hit:                                         100.0%        100                      
+        bin auto[0]                                        30          1    Covered              
+        bin auto[1]                                        24          1    Covered              
+        bin auto[2]                                        24          1    Covered              
+        bin auto[3]                                        25          1    Covered              
+        bin auto[4]                                        23          1    Covered              
+        bin auto[5]                                        30          1    Covered              
+        bin auto[6]                                        29          1    Covered              
+        bin auto[7]                                        13          1    Covered              
+        bin auto[8]                                        22          1    Covered              
+        bin auto[9]                                        14          1    Covered              
+        bin auto[10]                                       27          1    Covered              
+        bin auto[11]                                       18          1    Covered              
+        bin auto[12]                                       25          1    Covered              
+        bin auto[13]                                       26          1    Covered              
+        bin auto[14]                                       21          1    Covered              
+        bin auto[15]                                       18          1    Covered              
+    Coverpoint CO1                                     100.0%        100    Covered              
+        covered/total bins:                                17         17                      
+        missing/total bins:                                 0         17                      
+        % Hit:                                         100.0%        100                      
+        bin all_values_up[0]                               23          1    Covered              
+        bin all_values_up[1]                                9          1    Covered              
+        bin all_values_up[2]                                7          1    Covered              
+        bin all_values_up[3]                               11          1    Covered              
+        bin all_values_up[4]                               11          1    Covered              
+        bin all_values_up[5]                               15          1    Covered              
+        bin all_values_up[6]                               18          1    Covered              
+        bin all_values_up[7]                                8          1    Covered              
+        bin all_values_up[8]                                5          1    Covered              
+        bin all_values_up[9]                                9          1    Covered              
+        bin all_values_up[10]                               8          1    Covered              
+        bin all_values_up[11]                               7          1    Covered              
+        bin all_values_up[12]                              10          1    Covered              
+        bin all_values_up[13]                              11          1    Covered              
+        bin all_values_up[14]                              10          1    Covered              
+        bin all_values_up[15]                               7          1    Covered              
+        bin trans_zero                                      4          1    Covered              
+    Coverpoint CO2                                     100.0%        100    Covered              
+        covered/total bins:                                17         17                      
+        missing/total bins:                                 0         17                      
+        % Hit:                                         100.0%        100                      
+        bin all_values_down[0]                             12          1    Covered              
+        bin all_values_down[1]                             16          1    Covered              
+        bin all_values_down[2]                             13          1    Covered              
+        bin all_values_down[3]                             10          1    Covered              
+        bin all_values_down[4]                              8          1    Covered              
+        bin all_values_down[5]                             11          1    Covered              
+        bin all_values_down[6]                             10          1    Covered              
+        bin all_values_down[7]                              6          1    Covered              
+        bin all_values_down[8]                              8          1    Covered              
+        bin all_values_down[9]                              7          1    Covered              
+        bin all_values_down[10]                            12          1    Covered              
+        bin all_values_down[11]                            10          1    Covered              
+        bin all_values_down[12]                            10          1    Covered              
+        bin all_values_down[13]                            10          1    Covered              
+        bin all_values_down[14]                             9          1    Covered              
+        bin all_values_down[15]                             9          1    Covered              
+        bin trans_max                                       1          1    Covered              
+
+TOTAL COVERGROUP COVERAGE: 100.0%  COVERGROUP TYPES: 1
+
+ASSERTION RESULTS:
+-------------------------------------------------------
+Name                 File(Line)           Failure Pass 
+                                          Count   Count 
+-------------------------------------------------------
+/counter_tb/#ublk#95084642#25/immed__26
+                     counter_tb.sv(26)          0     1
+
+Total Coverage By File (code coverage only, filtered view): 60.2%
+

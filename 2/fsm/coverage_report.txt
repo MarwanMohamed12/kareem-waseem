@@ -1,0 +1,236 @@
+Coverage Report by file with details
+
+=================================================================================
+=== File: FSM_010.v
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           17        17         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file FSM_010.v --
+
+    1                                                ////////////////////////////////////////////////////////////////////////////////
+    2                                                // Author: Kareem Waseem
+    3                                                // Course: Digital Verification using SV & UVM
+    4                                                //
+    5                                                // Description: 010-sequence-detector Design 
+    6                                                //
+    7                                                ////////////////////////////////////////////////////////////////////////////////
+    8                                                module FSM_010(clk, rst, x, y, users_count);
+    9                                                	parameter IDLE  = 2'b00;
+    10                                               	parameter ZERO  = 2'b01;
+    11                                               	parameter ONE   = 2'b10;
+    12                                               	parameter STORE = 2'b11; 
+    13                                               
+    14                                               	input clk, rst, x;
+    15                                               	output y;
+    16                                               	output reg [9:0] users_count;
+    17                                               
+    18                                               	reg [1:0] cs, ns;
+    19                                               
+    20              1                         70     	always @(*) begin
+    21                                               		case (cs)
+    22                                               			IDLE: 
+    23                                               				if (x)
+    24              1                          7     					ns = IDLE;
+    25                                               				else 
+    26              1                          8     					ns = ZERO;
+    27                                               			ZERO:
+    28                                               				if (x)
+    29              1                         13     					ns = ONE;
+    30                                               				else 
+    31              1                         13     					ns = ZERO;
+    32                                               			ONE: 
+    33                                               				if (x)
+    34              1                         12     					ns = IDLE;
+    35                                               				else 
+    36              1                          7     					ns = STORE;
+    37                                               			STORE: 
+    38                                               				if (x)
+    39              1                          2     					ns = IDLE;
+    40                                               				else 
+    41              1                          7     					ns = ZERO;
+    42              1                          1     			default: 	ns = IDLE;
+    43                                               		endcase
+    44                                               	end
+    45                                               
+    46              1                         49     	always @(posedge clk or posedge rst) begin
+    47                                               		if(rst) begin
+    48              1                          4     			cs <= IDLE;
+    49                                               		end
+    50                                               		else begin
+    51              1                         45     			cs <= ns;
+    52                                               		end
+    53                                               	end
+    54                                               
+    55              1                         43     	always @(posedge clk or posedge rst) begin
+    56                                               		if(rst) begin
+    57              1                          4     			users_count <= 0;
+    58                                               		end
+    59                                               		else begin
+    60                                               			if (cs == STORE)
+    61              1                          7     				users_count <= users_count + 1;
+    62                                               		end
+    63                                               	end
+    64                                               
+    65              1                         41     	assign y = (cs == STORE)? 1:0;
+    66                                               
+    67                                               endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                        21        21         0     100.0
+
+================================Branch Details================================
+
+Branch Coverage for file FSM_010.v --
+
+------------------------------------CASE Branch------------------------------------
+    21                                        70     Count coming in to CASE
+    22              1                         15     			IDLE: 
+    27              1                         26     			ZERO:
+    32              1                         19     			ONE: 
+    37              1                          9     			STORE: 
+    42              1                          1     			default: 	ns = IDLE;
+Branch totals: 5 hits of 5 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    23                                        15     Count coming in to IF
+    23              1                          7     				if (x)
+    25              1                          8     				else 
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    28                                        26     Count coming in to IF
+    28              1                         13     				if (x)
+    30              1                         13     				else 
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    33                                        19     Count coming in to IF
+    33              1                         12     				if (x)
+    35              1                          7     				else 
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    38                                         9     Count coming in to IF
+    38              1                          2     				if (x)
+    40              1                          7     				else 
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    47                                        49     Count coming in to IF
+    47              1                          4     		if(rst) begin
+    50              1                         45     		else begin
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    56                                        43     Count coming in to IF
+    56              1                          4     		if(rst) begin
+    59              1                         39     		else begin
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    60                                        39     Count coming in to IF
+    60              1                          7     			if (cs == STORE)
+                                              32     All False Count
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    65                                        40     Count coming in to IF
+    65              1                          7     	assign y = (cs == STORE)? 1:0;
+    65              2                         33     	assign y = (cs == STORE)? 1:0;
+Branch totals: 2 hits of 2 branches = 100.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       4         4         0     100.0
+        Transitions                  7         7         0     100.0
+
+================================FSM Details================================
+
+FSM Coverage for file FSM_010.v --
+
+FSM_ID: cs
+    Current State Object : cs
+    ----------------------
+    State Value MapInfo :
+    ---------------------
+Line          State Name               Value
+----          ----------               -----
+  22                IDLE                   0
+  27                ZERO                   1
+  32                 ONE                   2
+  37               STORE                   3
+    Covered States :
+    ----------------
+                   State           Hit_count
+                   -----           ---------
+                    IDLE                  11
+                    ZERO                  19
+                     ONE                  12
+                   STORE                   7
+    Covered Transitions :
+    ---------------------
+Line            Trans_ID           Hit_count          Transition          
+----            --------           ---------          ----------          
+  26                   0                   8          IDLE -> ZERO        
+  29                   1                  12          ZERO -> ONE         
+  48                   2                   1          ZERO -> IDLE        
+  36                   3                   7          ONE -> STORE        
+  34                   4                   4          ONE -> IDLE         
+  41                   5                   5          STORE -> ZERO       
+  39                   6                   2          STORE -> IDLE       
+
+
+    Summary                     Active      Hits    Misses % Covered
+    -------                     ------      ----    ------ ---------
+        States                       4         4         0     100.0
+        Transitions                  7         7         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                     22        22         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File FSM_010.v --
+
+       Line                                   Node      1H->0L      0L->1H                          "Coverage"
+--------------------------------------------------------------------------------------------------------------
+         14                                      x           1           1                              100.00 
+         14                                    rst           1           1                              100.00 
+         14                                    clk           1           1                              100.00 
+         15                                      y           1           1                              100.00 
+         16                         users_count[2]           1           1                              100.00 
+         16                         users_count[1]           1           1                              100.00 
+         16                         users_count[0]           1           1                              100.00 
+         18                                  ns[1]           1           1                              100.00 
+         18                                  ns[0]           1           1                              100.00 
+         18                                  cs[1]           1           1                              100.00 
+         18                                  cs[0]           1           1                              100.00 
+
+Total Node Count     =         11 
+Toggled Node Count   =         11 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (22 of 22 bins)
+
+
+Total Coverage By File (code coverage only, filtered view): 100.0%
+

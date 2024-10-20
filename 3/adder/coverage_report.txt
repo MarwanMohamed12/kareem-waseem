@@ -1,0 +1,520 @@
+Coverage Report by file with details
+
+=================================================================================
+=== File: Adder_tb.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           33        30         3      90.9
+
+================================Statement Details================================
+
+Statement Coverage for file Adder_tb.sv --
+
+    1                                                import pack::*;
+    2                                                
+    3                                                module Adder_tb();
+    4                                                
+    5                                                int correct,error;
+    6                                                bit  clk,reset;
+    7                                                logic  signed [3:0] A;	// Input data A in 2's complement
+    8                                                logic  signed [3:0] B;	// Input data B in 2's complement
+    9                                                logic signed [4:0] C;
+    10                                               
+    11                                               adder tb1(.*);
+    12                                               
+    13              1                          1     transaction tr=new();
+    14                                               
+    15                                               initial 
+    16              1                          1     begin clk=0;
+    17              1                          1     forever #5 clk=!clk;
+    17              2                         43     
+    17              3                         42     
+    18              1                    ***0***     tr.clk=clk;
+    19                                               end
+    20                                               
+    21                                               
+    22                                               initial begin 
+    23              1                          1     tr.reset=1;
+    24              1                          1     init(tr);
+    25              1                          1     @(negedge clk);
+    26              1                          1     sampling(tr);
+    27                                               
+    28              1                         20     repeat(20)begin
+    29                                               assert(tr.randomize());
+    30              1                         20     init(tr);
+    31              1                         20     checker_res(tr);
+    32              1                         20     sampling(tr);
+    33                                               end
+    34              1                          1     $display("error_count=%0d  ------- correct_count=%0d",error,correct);
+    35              1                          1     $stop;
+    36                                               
+    37                                               end 
+    38                                               
+    39                                               task checker_res(transaction tr);
+    40              1                         20     golden_model(tr);
+    41              1                         20     @(negedge clk);
+    42                                               if(C!=tr.C)begin
+    43              1                    ***0***     $display("there is somthing wrong @%t",$time);
+    44              1                    ***0***     error++;
+    45                                               end
+    46                                               else 
+    47              1                         20     correct++;
+    48                                               endtask
+    49                                               
+    50                                               task golden_model(transaction tr);
+    51                                               if(tr.reset)
+    52              1                          2         tr.C=0;
+    53                                               else
+    54              1                         18         tr.C=tr.A+tr.B;
+    55                                               endtask
+    56                                               
+    57                                                
+    58                                               
+    59                                               function void init(transaction tx);
+    60              1                         21     A=tx.A;B=tx.B;
+    60              2                         21     
+    61              1                         21     reset=tx.reset;
+    62              1                         21     tx.C=C;
+    63                                               endfunction
+    64                                               
+    65                                               function void sampling(transaction ts);
+    66                                               if(ts.reset)begin
+    67                                               //$display("@%0t im  done1");
+    68              1                          3     ts.Covgrp_A.stop();
+    69              1                          3     ts.Covgrp_B.stop();
+    70                                               end
+    71                                               else begin
+    72                                               //$display("@%0t im  done1");
+    73              1                         18     ts.Covgrp_A.start();
+    74              1                         18     ts.Covgrp_B.start();
+    75              1                         18     ts.Covgrp_A.sample();
+    76              1                         18     ts.Covgrp_B.sample();
+    77                                               end
+    78                                               
+    79                                               
+    80                                               endfunction
+    81                                               
+    82                                               
+    83                                               endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         6         5         1      83.3
+
+================================Branch Details================================
+
+Branch Coverage for file Adder_tb.sv --
+
+------------------------------------IF Branch------------------------------------
+    42                                        20     Count coming in to IF
+    42              1                    ***0***     if(C!=tr.C)begin
+    46              1                         20     else 
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    51                                        20     Count coming in to IF
+    51              1                          2     if(tr.reset)
+    53              1                         18     else
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    66                                        21     Count coming in to IF
+    66              1                          3     if(ts.reset)begin
+    71              1                         18     else begin
+Branch totals: 2 hits of 2 branches = 100.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                    158        39       119      24.6
+
+================================Toggle Details================================
+
+Toggle Coverage for File Adder_tb.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+          5                               error[9]           0           0        0.00 
+          5                               error[8]           0           0        0.00 
+          5                               error[7]           0           0        0.00 
+          5                               error[6]           0           0        0.00 
+          5                               error[5]           0           0        0.00 
+          5                               error[4]           0           0        0.00 
+          5                               error[3]           0           0        0.00 
+          5                              error[31]           0           0        0.00 
+          5                              error[30]           0           0        0.00 
+          5                               error[2]           0           0        0.00 
+          5                              error[29]           0           0        0.00 
+          5                              error[28]           0           0        0.00 
+          5                              error[27]           0           0        0.00 
+          5                              error[26]           0           0        0.00 
+          5                              error[25]           0           0        0.00 
+          5                              error[24]           0           0        0.00 
+          5                              error[23]           0           0        0.00 
+          5                              error[22]           0           0        0.00 
+          5                              error[21]           0           0        0.00 
+          5                              error[20]           0           0        0.00 
+          5                               error[1]           0           0        0.00 
+          5                              error[19]           0           0        0.00 
+          5                              error[18]           0           0        0.00 
+          5                              error[17]           0           0        0.00 
+          5                              error[16]           0           0        0.00 
+          5                              error[15]           0           0        0.00 
+          5                              error[14]           0           0        0.00 
+          5                              error[13]           0           0        0.00 
+          5                              error[12]           0           0        0.00 
+          5                              error[11]           0           0        0.00 
+          5                              error[10]           0           0        0.00 
+          5                               error[0]           0           0        0.00 
+          5                             correct[9]           0           0        0.00 
+          5                             correct[8]           0           0        0.00 
+          5                             correct[7]           0           0        0.00 
+          5                             correct[6]           0           0        0.00 
+          5                             correct[5]           0           0        0.00 
+          5                             correct[4]           0           1       50.00 
+          5                             correct[3]           1           1      100.00 
+          5                            correct[31]           0           0        0.00 
+          5                            correct[30]           0           0        0.00 
+          5                             correct[2]           1           1      100.00 
+          5                            correct[29]           0           0        0.00 
+          5                            correct[28]           0           0        0.00 
+          5                            correct[27]           0           0        0.00 
+          5                            correct[26]           0           0        0.00 
+          5                            correct[25]           0           0        0.00 
+          5                            correct[24]           0           0        0.00 
+          5                            correct[23]           0           0        0.00 
+          5                            correct[22]           0           0        0.00 
+          5                            correct[21]           0           0        0.00 
+          5                            correct[20]           0           0        0.00 
+          5                             correct[1]           1           1      100.00 
+          5                            correct[19]           0           0        0.00 
+          5                            correct[18]           0           0        0.00 
+          5                            correct[17]           0           0        0.00 
+          5                            correct[16]           0           0        0.00 
+          5                            correct[15]           0           0        0.00 
+          5                            correct[14]           0           0        0.00 
+          5                            correct[13]           0           0        0.00 
+          5                            correct[12]           0           0        0.00 
+          5                            correct[11]           0           0        0.00 
+          5                            correct[10]           0           0        0.00 
+          5                             correct[0]           1           1      100.00 
+          6                                  reset           1           1      100.00 
+          6                                    clk           1           1      100.00 
+          7                                   A[3]           1           1      100.00 
+          7                                   A[2]           1           1      100.00 
+          7                                   A[1]           1           1      100.00 
+          7                                   A[0]           1           1      100.00 
+          8                                   B[3]           1           1      100.00 
+          8                                   B[2]           1           1      100.00 
+          8                                   B[1]           1           1      100.00 
+          8                                   B[0]           1           1      100.00 
+          9                                   C[4]           1           1      100.00 
+          9                                   C[3]           1           1      100.00 
+          9                                   C[2]           1           1      100.00 
+          9                                   C[1]           1           1      100.00 
+          9                                   C[0]           1           1      100.00 
+
+Total Node Count     =         79 
+Toggled Node Count   =         19 
+Untoggled Node Count =         60 
+
+Toggle Coverage      =       24.6% (39 of 158 bins)
+
+=================================================================================
+=== File: adder.v
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            3         3         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file adder.v --
+
+    1                                                module adder (
+    2                                                    input  clk,
+    3                                                    input  reset,
+    4                                                    input  signed [3:0] A,	// Input data A in 2's complement
+    5                                                    input  signed [3:0] B,	// Input data B in 2's complement
+    6                                                    output reg signed [4:0] C // Adder output in 2's complement
+    7                                                		  );
+    8                                                
+    9                                                   // Register output C
+    10              1                         24        always @(posedge clk or posedge reset) begin
+    11                                                     if (reset)
+    12              1                          6     	     C <= 5'b0;
+    13                                                     else
+    14              1                         18     	     C <= A + B;
+    15                                                  end
+    16                                               
+    17                                               endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         2         2         0     100.0
+
+================================Branch Details================================
+
+Branch Coverage for file adder.v --
+
+------------------------------------IF Branch------------------------------------
+    11                                        24     Count coming in to IF
+    11              1                          6           if (reset)
+    13              1                         18           else
+Branch totals: 2 hits of 2 branches = 100.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                     30        30         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File adder.v --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+          2                                    clk           1           1      100.00 
+          3                                  reset           1           1      100.00 
+          4                                   A[3]           1           1      100.00 
+          4                                   A[2]           1           1      100.00 
+          4                                   A[1]           1           1      100.00 
+          4                                   A[0]           1           1      100.00 
+          5                                   B[3]           1           1      100.00 
+          5                                   B[2]           1           1      100.00 
+          5                                   B[1]           1           1      100.00 
+          5                                   B[0]           1           1      100.00 
+          6                                   C[4]           1           1      100.00 
+          6                                   C[3]           1           1      100.00 
+          6                                   C[2]           1           1      100.00 
+          6                                   C[1]           1           1      100.00 
+          6                                   C[0]           1           1      100.00 
+
+Total Node Count     =         15 
+Toggled Node Count   =         15 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (30 of 30 bins)
+
+=================================================================================
+=== File: pack.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            2         2         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file pack.sv --
+
+    1                                                package pack;
+    2                                                    typedef enum {MAXPOS=7,MAXNEG=-8,ZERO=0} corner_e;
+    3                                                    class transaction;
+    4                                                        bit clk;
+    5                                                        rand bit reset;
+    6                                                        rand bit signed [3:0] A;	// bit data A in 2's complement
+    7                                                        rand bit signed [3:0] B;	// bit data B in 2's complement
+    8                                                        bit signed [4:0] C;
+    9                                                        rand corner_e wanted_case_A,wanted_case_B;
+    10                                                       rand bit signed [3:0] remaning_A,remaning_B;
+    11                                               
+    12                                                       constraint x{
+    13                                                           remaning_A!= MAXPOS || MAXNEG ||ZERO;
+    14                                                           remaning_B!= MAXPOS || MAXNEG ||ZERO;
+    15                                                           reset dist {1:=2,0:=98};
+    16                                                           A dist {wanted_case_A:=80,remaning_A:=20};
+    17                                                           B dist {wanted_case_B:=80,remaning_B:=20};
+    18                                                       }
+    19                                               
+    20                                                       covergroup Covgrp_A;
+    21                                                           CP_A1: coverpoint A{
+    22                                                               bins data_0={0};
+    23                                                               bins data_max={MAXPOS};
+    24                                                               bins data_min={MAXNEG};
+    25                                                               bins data_default=default;
+    26                                                           }
+    27                                                           CP_A2: coverpoint A{
+    28                                                               bins data_0max=(ZERO=>MAXPOS);
+    29                                                               bins data_maxmin=(MAXPOS=>MAXNEG);
+    30                                                               bins data_minmax=(MAXNEG=>MAXPOS);
+    31                                                           }
+    32                                                       endgroup
+    33                                               
+    34                                                       covergroup Covgrp_B;
+    35                                                           CP_B1: coverpoint A{
+    36                                                               bins data_0={0};
+    37                                                               bins data_max={MAXPOS};
+    38                                                               bins data_min={MAXNEG};
+    39                                                               bins data_default=default;
+    40                                                           }
+    41                                                           CP_B2: coverpoint A{
+    42                                                               bins data_0max=(ZERO=>MAXPOS);
+    43                                                               bins data_maxmin=(MAXPOS=>MAXNEG);
+    44                                                               bins data_minmax=(MAXNEG=>MAXPOS);
+    45                                                           }
+    46                                                       endgroup
+    47                                               
+    48                                               
+    49                                                       function new();
+    50              1                          1                 Covgrp_A =new();
+    51              1                          1                 Covgrp_B =new();
+    52                                                       endfunction //new()
+    53                                                   endclass //transaction
+    54                                               endpackage
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         0         0         0     100.0
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File pack.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+COVERGROUP COVERAGE:
+-----------------------------------------------------------------------------------------------
+Covergroup                                             Metric       Goal    Status               
+                                                                                              
+-----------------------------------------------------------------------------------------------
+ TYPE /pack/transaction/Covgrp_A                       100.0%        100    Covered              
+    covered/total bins:                                     6          6                      
+    missing/total bins:                                     0          6                      
+    % Hit:                                             100.0%        100                      
+    Coverpoint Covgrp_A::CP_A1                         100.0%        100    Covered              
+        covered/total bins:                                 3          3                      
+        missing/total bins:                                 0          3                      
+        % Hit:                                         100.0%        100                      
+    Coverpoint Covgrp_A::CP_A2                         100.0%        100    Covered              
+        covered/total bins:                                 3          3                      
+        missing/total bins:                                 0          3                      
+        % Hit:                                         100.0%        100                      
+ CLASS transaction
+ Covergroup instance \/pack::transaction::Covgrp_A  
+                                                       100.0%        100    Covered              
+    covered/total bins:                                     6          6                      
+    missing/total bins:                                     0          6                      
+    % Hit:                                             100.0%        100                      
+    Coverpoint CP_A1                                   100.0%        100    Covered              
+        covered/total bins:                                 3          3                      
+        missing/total bins:                                 0          3                      
+        % Hit:                                         100.0%        100                      
+        bin data_0                                          5          1    Covered              
+        bin data_max                                        4          1    Covered              
+        bin data_min                                        5          1    Covered              
+        default bin data_default                            4               Occurred             
+    Coverpoint CP_A2                                   100.0%        100    Covered              
+        covered/total bins:                                 3          3                      
+        missing/total bins:                                 0          3                      
+        % Hit:                                         100.0%        100                      
+        bin data_0max                                       1          1    Covered              
+        bin data_maxmin                                     1          1    Covered              
+        bin data_minmax                                     1          1    Covered              
+ TYPE /pack/transaction/Covgrp_B                       100.0%        100    Covered              
+    covered/total bins:                                     6          6                      
+    missing/total bins:                                     0          6                      
+    % Hit:                                             100.0%        100                      
+    Coverpoint Covgrp_B::CP_B1                         100.0%        100    Covered              
+        covered/total bins:                                 3          3                      
+        missing/total bins:                                 0          3                      
+        % Hit:                                         100.0%        100                      
+    Coverpoint Covgrp_B::CP_B2                         100.0%        100    Covered              
+        covered/total bins:                                 3          3                      
+        missing/total bins:                                 0          3                      
+        % Hit:                                         100.0%        100                      
+ CLASS transaction
+ Covergroup instance \/pack::transaction::Covgrp_B  
+                                                       100.0%        100    Covered              
+    covered/total bins:                                     6          6                      
+    missing/total bins:                                     0          6                      
+    % Hit:                                             100.0%        100                      
+    Coverpoint CP_B1                                   100.0%        100    Covered              
+        covered/total bins:                                 3          3                      
+        missing/total bins:                                 0          3                      
+        % Hit:                                         100.0%        100                      
+        bin data_0                                          5          1    Covered              
+        bin data_max                                        4          1    Covered              
+        bin data_min                                        5          1    Covered              
+        default bin data_default                            4               Occurred             
+    Coverpoint CP_B2                                   100.0%        100    Covered              
+        covered/total bins:                                 3          3                      
+        missing/total bins:                                 0          3                      
+        % Hit:                                         100.0%        100                      
+        bin data_0max                                       1          1    Covered              
+        bin data_maxmin                                     1          1    Covered              
+        bin data_minmax                                     1          1    Covered              
+
+TOTAL COVERGROUP COVERAGE: 100.0%  COVERGROUP TYPES: 2
+
+ASSERTION RESULTS:
+-------------------------------------------------------
+Name                 File(Line)           Failure Pass 
+                                          Count   Count 
+-------------------------------------------------------
+/Adder_tb/#ublk#179077842#28/immed__29
+                     Adder_tb.sv(29)            0     1
+
+Total Coverage By File (code coverage only, filtered view): 72.1%
+

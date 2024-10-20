@@ -1,0 +1,125 @@
+Coverage Report by file with details
+
+=================================================================================
+=== File: my_mem.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            4         4         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file my_mem.sv --
+
+    1                                                module my_mem(
+    2                                                input clk,
+    3                                                input write,
+    4                                                input read,
+    5                                                input [7:0] data_in,
+    6                                                input [15:0] address,
+    7                                                output reg [8:0] data_out
+    8                                                );
+    9                                                 // Declare a 9-bit associative array using the logic data type & the key of int datatype
+    10                                               logic [8:0]mem_array[int];
+    11                                               
+    12              1                        231     always @(posedge clk) begin
+    13                                                   if (write)
+    14              1                        115         mem_array[address] = {~^data_in, data_in};
+    15                                               
+    16                                                   else if (read)
+    17              1                        115         data_out = mem_array[address];
+    18                                                   else
+    19              1                          1         mem_array[address]= mem_array[address];
+    20                                                   end
+    21                                               endmodule
+    22                                               
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         3         3         0     100.0
+
+================================Branch Details================================
+
+Branch Coverage for file my_mem.sv --
+
+------------------------------------IF Branch------------------------------------
+    13                                       231     Count coming in to IF
+    13              1                        115         if (write)
+    16              1                        115         else if (read)
+    18              1                          1         else
+Branch totals: 3 hits of 3 branches = 100.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                     72        72         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File my_mem.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+          2                                    clk           1           1      100.00 
+          3                                  write           1           1      100.00 
+          4                                   read           1           1      100.00 
+          5                             data_in[7]           1           1      100.00 
+          5                             data_in[6]           1           1      100.00 
+          5                             data_in[5]           1           1      100.00 
+          5                             data_in[4]           1           1      100.00 
+          5                             data_in[3]           1           1      100.00 
+          5                             data_in[2]           1           1      100.00 
+          5                             data_in[1]           1           1      100.00 
+          5                             data_in[0]           1           1      100.00 
+          6                             address[9]           1           1      100.00 
+          6                             address[8]           1           1      100.00 
+          6                             address[7]           1           1      100.00 
+          6                             address[6]           1           1      100.00 
+          6                             address[5]           1           1      100.00 
+          6                             address[4]           1           1      100.00 
+          6                             address[3]           1           1      100.00 
+          6                             address[2]           1           1      100.00 
+          6                             address[1]           1           1      100.00 
+          6                            address[15]           1           1      100.00 
+          6                            address[14]           1           1      100.00 
+          6                            address[13]           1           1      100.00 
+          6                            address[12]           1           1      100.00 
+          6                            address[11]           1           1      100.00 
+          6                            address[10]           1           1      100.00 
+          6                             address[0]           1           1      100.00 
+          7                            data_out[8]           1           1      100.00 
+          7                            data_out[7]           1           1      100.00 
+          7                            data_out[6]           1           1      100.00 
+          7                            data_out[5]           1           1      100.00 
+          7                            data_out[4]           1           1      100.00 
+          7                            data_out[3]           1           1      100.00 
+          7                            data_out[2]           1           1      100.00 
+          7                            data_out[1]           1           1      100.00 
+          7                            data_out[0]           1           1      100.00 
+
+Total Node Count     =         36 
+Toggled Node Count   =         36 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (72 of 72 bins)
+
+
+Total Coverage By File (code coverage only, filtered view): 100.0%
+

@@ -1,0 +1,436 @@
+Coverage Report by file with details
+
+=================================================================================
+=== File: ALSU.v
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           50        50         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file ALSU.v --
+
+    1                                                module ALSU(A, B, cin, serial_in, red_op_A, red_op_B, opcode, bypass_A, bypass_B, clk, rst, direction, leds, out);
+    2                                                parameter INPUT_PRIORITY = "A";
+    3                                                parameter FULL_ADDER = "ON";
+    4                                                input  clk, rst, cin, red_op_A, red_op_B, bypass_A, bypass_B, direction, serial_in;
+    5                                                input  [2:0] opcode;
+    6                                                input signed [2:0] A, B;
+    7                                                output reg signed[15:0] leds;
+    8                                                output reg signed[5:0] out;
+    9                                                
+    10                                               reg cin_reg, red_op_A_reg, red_op_B_reg, bypass_A_reg, bypass_B_reg, direction_reg, serial_in_reg;
+    11                                               reg [2:0] opcode_reg; 
+    12                                               reg signed [2:0] A_reg, B_reg; //change to signed 
+    13                                               reg signed[5:0] out_next;      //change to signed 
+    14                                               wire invalid_red_op, invalid_opcode, invalid;
+    15                                               
+    16                                               //Invalid handling
+    17              1                        959     assign invalid_red_op = (red_op_A_reg | red_op_B_reg) & (opcode_reg[1] | opcode_reg[2]);
+    18              1                        861     assign invalid_opcode = opcode_reg[1] & opcode_reg[2];
+    19              1                        542     assign invalid = invalid_red_op | invalid_opcode;
+    20                                               
+    21                                               //Registering input signals
+    22              1                       2001     always @(posedge clk or posedge rst) begin
+    23                                                 if(rst) begin
+    24              1                        115          cin_reg <= 0;
+    25              1                        115          red_op_B_reg <= 0;
+    26              1                        115          red_op_A_reg <= 0;
+    27              1                        115          bypass_B_reg <= 0;
+    28              1                        115          bypass_A_reg <= 0;
+    29              1                        115          direction_reg <= 0;
+    30              1                        115          serial_in_reg <= 0;
+    31              1                        115          opcode_reg <= 0;
+    32              1                        115          A_reg <= 0;
+    33              1                        115          B_reg <= 0;
+    34              1                        115         out_next<=0; // we need a ff to keep value of output to be Zero
+    35                                                 end else begin
+    36              1                       1886          cin_reg <= cin;
+    37              1                       1886          red_op_B_reg <= red_op_B;
+    38              1                       1886          red_op_A_reg <= red_op_A;
+    39              1                       1886          bypass_B_reg <= bypass_B;
+    40              1                       1886          bypass_A_reg <= bypass_A;
+    41              1                       1886          direction_reg <= direction;
+    42              1                       1886          serial_in_reg <= serial_in;
+    43              1                       1886          opcode_reg <= opcode;
+    44              1                       1886          A_reg <= A;
+    45              1                       1886          B_reg <= B;
+    46              1                       1886         out_next<=out; // we need a ff to keep value of output until serial in reg get its new value 
+    47                                                 end
+    48                                               end
+    49                                               
+    50                                               //leds output blinking 
+    51              1                       2061     always @(posedge clk or posedge rst) begin
+    52                                                 if(rst) begin
+    53              1                        173          leds <= 0;
+    54                                                 end else begin
+    55                                                     if (invalid)
+    56              1                       1073             leds <= ~leds;
+    57                                                     else
+    58              1                        815             leds <= 0;
+    59                                                 end
+    60                                               end
+    61                                               
+    62                                               //ALSU output processing
+    63              1                       1946     always @(posedge clk or posedge rst) begin
+    64                                                
+    65                                                 if(rst) begin
+    66              1                        115         out <= 0;
+    67                                                 end
+    68                                                 else begin
+    69                                                   if (bypass_A_reg && bypass_B_reg)
+    70              1                         18           out <= (INPUT_PRIORITY == "A")? A_reg: B_reg;
+    71                                                   else if (bypass_A_reg)
+    72              1                        151           out <= A_reg;
+    73                                                   else if (bypass_B_reg)
+    74              1                        160           out <= B_reg;
+    75                                                   else if (invalid) // cahnge the priority of invalid bits after bypass_reg 
+    76              1                        846             out <= 0;
+    77                                                   else begin
+    78                                                       case (opcode)
+    79                                                         3'h0: begin //change Opcode to OR not AND
+    80                                                           if (red_op_A_reg && red_op_B_reg)
+    81              1                         16                   out = (INPUT_PRIORITY == "A")? |A_reg: |B_reg;
+    82                                                           else if (red_op_A_reg) 
+    83              1                         23                   out <= |A_reg;
+    84                                                           else if (red_op_B_reg)
+    85              1                          8                   out <= |B_reg;
+    86                                                           else 
+    87              1                         80                   out <= A_reg | B_reg;
+    88                                                         end
+    89                                                         3'h1: begin // change opcode to XOR not OR
+    90                                                           if (red_op_A_reg && red_op_B_reg)
+    91              1                         14                   out <= (INPUT_PRIORITY == "A")? ^A_reg: ^B_reg;
+    92                                                           else if (red_op_A_reg) 
+    93              1                         21                   out <= ^A_reg;
+    94                                                           else if (red_op_B_reg)
+    95              1                         10                   out <= ^B_reg;
+    96                                                           else 
+    97              1                         85                   out <= A_reg ^ B_reg;
+    98                                                         end
+    99                                                         3'h2: begin //here we add condition to check full adder if ON or OFF
+    100                                                          if(FULL_ADDER == "ON") 
+    101             1                        115                   out <= A_reg + B_reg+cin_reg;
+    102                                                          else if(FULL_ADDER == "OFF") 
+    103                                                            out <= A_reg + B_reg;
+    104                                              
+    105                                                        end
+    106             1                        104               3'h3: out <= A_reg * B_reg;
+    107                                                        3'h4: begin
+    108                                                            
+    109                                                          if (direction_reg)
+    110             1                         40                   out <= {out_next[4:0], serial_in_reg};
+    111                                                          else
+    112             1                         52                   out <= {serial_in_reg, out_next[5:1]};
+    113                                                        end
+    114                                                        3'h5: begin
+    115                                                          if (direction_reg)
+    116             1                         30                   out <= {out_next[4:0], out_next[5]};
+    117                                                          else
+    118             1                         40                   out <= {out_next[0], out_next[5:1]};
+    119                                                        end
+    120                                                      endcase
+    121                                                  end 
+    122                                                end
+    123                                              end
+    124                                              
+    125                                              endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                        32        32         0     100.0
+
+================================Branch Details================================
+
+Branch Coverage for file ALSU.v --
+
+------------------------------------IF Branch------------------------------------
+    23                                      2001     Count coming in to IF
+    23              1                        115       if(rst) begin
+    35              1                       1886       end else begin
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    52                                      2061     Count coming in to IF
+    52              1                        173       if(rst) begin
+    54              1                       1888       end else begin
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    55                                      1888     Count coming in to IF
+    55              1                       1073           if (invalid)
+    57              1                        815           else
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    65                                      1946     Count coming in to IF
+    65              1                        115       if(rst) begin
+    68              1                       1831       else begin
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    69                                      1831     Count coming in to IF
+    69              1                         18         if (bypass_A_reg && bypass_B_reg)
+    71              1                        151         else if (bypass_A_reg)
+    73              1                        160         else if (bypass_B_reg)
+    75              1                        846         else if (invalid) // cahnge the priority of invalid bits after bypass_reg 
+    77              1                        656         else begin
+Branch totals: 5 hits of 5 branches = 100.0%
+
+------------------------------------CASE Branch------------------------------------
+    78                                       656     Count coming in to CASE
+    79              1                        127               3'h0: begin //change Opcode to OR not AND
+    89              1                        130               3'h1: begin // change opcode to XOR not OR
+    99              1                        115               3'h2: begin //here we add condition to check full adder if ON or OFF
+    106             1                        104               3'h3: out <= A_reg * B_reg;
+    107             1                         92               3'h4: begin
+    114             1                         70               3'h5: begin
+                                              18     All False Count
+Branch totals: 7 hits of 7 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    80                                       127     Count coming in to IF
+    80              1                         16                 if (red_op_A_reg && red_op_B_reg)
+    82              1                         23                 else if (red_op_A_reg) 
+    84              1                          8                 else if (red_op_B_reg)
+    86              1                         80                 else 
+Branch totals: 4 hits of 4 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    90                                       130     Count coming in to IF
+    90              1                         14                 if (red_op_A_reg && red_op_B_reg)
+    92              1                         21                 else if (red_op_A_reg) 
+    94              1                         10                 else if (red_op_B_reg)
+    96              1                         85                 else 
+Branch totals: 4 hits of 4 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    109                                       92     Count coming in to IF
+    109             1                         40                 if (direction_reg)
+    111             1                         52                 else
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    115                                       70     Count coming in to IF
+    115             1                         30                 if (direction_reg)
+    117             1                         40                 else
+Branch totals: 2 hits of 2 branches = 100.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              6         6         0     100.0
+
+================================Condition Details================================
+
+Condition Coverage for file ALSU.v --
+
+----------------Focused Condition View-------------------
+Line       69 Item    1  (bypass_A_reg && bypass_B_reg)
+Condition totals: 2 of 2 input terms covered = 100.0%
+
+    Input Term   Covered  Reason for no coverage   Hint
+   -----------  --------  -----------------------  --------------
+  bypass_A_reg         Y
+  bypass_B_reg         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  bypass_A_reg_0        -                             
+  Row   2:          1  bypass_A_reg_1        bypass_B_reg                  
+  Row   3:          1  bypass_B_reg_0        bypass_A_reg                  
+  Row   4:          1  bypass_B_reg_1        bypass_A_reg                  
+
+----------------Focused Condition View-------------------
+Line       80 Item    1  (red_op_A_reg && red_op_B_reg)
+Condition totals: 2 of 2 input terms covered = 100.0%
+
+    Input Term   Covered  Reason for no coverage   Hint
+   -----------  --------  -----------------------  --------------
+  red_op_A_reg         Y
+  red_op_B_reg         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  red_op_A_reg_0        -                             
+  Row   2:          1  red_op_A_reg_1        red_op_B_reg                  
+  Row   3:          1  red_op_B_reg_0        red_op_A_reg                  
+  Row   4:          1  red_op_B_reg_1        red_op_A_reg                  
+
+----------------Focused Condition View-------------------
+Line       90 Item    1  (red_op_A_reg && red_op_B_reg)
+Condition totals: 2 of 2 input terms covered = 100.0%
+
+    Input Term   Covered  Reason for no coverage   Hint
+   -----------  --------  -----------------------  --------------
+  red_op_A_reg         Y
+  red_op_B_reg         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  red_op_A_reg_0        -                             
+  Row   2:          1  red_op_A_reg_1        red_op_B_reg                  
+  Row   3:          1  red_op_B_reg_0        red_op_A_reg                  
+  Row   4:          1  red_op_B_reg_1        red_op_A_reg                  
+
+
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             8         8         0     100.0
+
+================================Expression Details================================
+
+Expression Coverage for file ALSU.v --
+
+----------------Focused Expression View-----------------
+Line       17 Item    1  ((red_op_A_reg | red_op_B_reg) & (opcode_reg[1] | opcode_reg[2]))
+Expression totals: 4 of 4 input terms covered = 100.0%
+
+     Input Term   Covered  Reason for no coverage   Hint
+    -----------  --------  -----------------------  --------------
+   red_op_A_reg         Y
+   red_op_B_reg         Y
+  opcode_reg[1]         Y
+  opcode_reg[2]         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  red_op_A_reg_0        ((opcode_reg[1] | opcode_reg[2]) && ~red_op_B_reg)
+  Row   2:          1  red_op_A_reg_1        ((opcode_reg[1] | opcode_reg[2]) && ~red_op_B_reg)
+  Row   3:          1  red_op_B_reg_0        ((opcode_reg[1] | opcode_reg[2]) && ~red_op_A_reg)
+  Row   4:          1  red_op_B_reg_1        ((opcode_reg[1] | opcode_reg[2]) && ~red_op_A_reg)
+  Row   5:          1  opcode_reg[1]_0       ((red_op_A_reg | red_op_B_reg) && ~opcode_reg[2])
+  Row   6:          1  opcode_reg[1]_1       ((red_op_A_reg | red_op_B_reg) && ~opcode_reg[2])
+  Row   7:          1  opcode_reg[2]_0       ((red_op_A_reg | red_op_B_reg) && ~opcode_reg[1])
+  Row   8:          1  opcode_reg[2]_1       ((red_op_A_reg | red_op_B_reg) && ~opcode_reg[1])
+
+----------------Focused Expression View-----------------
+Line       18 Item    1  (opcode_reg[1] & opcode_reg[2])
+Expression totals: 2 of 2 input terms covered = 100.0%
+
+     Input Term   Covered  Reason for no coverage   Hint
+    -----------  --------  -----------------------  --------------
+  opcode_reg[1]         Y
+  opcode_reg[2]         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  opcode_reg[1]_0       opcode_reg[2]                 
+  Row   2:          1  opcode_reg[1]_1       opcode_reg[2]                 
+  Row   3:          1  opcode_reg[2]_0       opcode_reg[1]                 
+  Row   4:          1  opcode_reg[2]_1       opcode_reg[1]                 
+
+----------------Focused Expression View-----------------
+Line       19 Item    1  (invalid_red_op | invalid_opcode)
+Expression totals: 2 of 2 input terms covered = 100.0%
+
+      Input Term   Covered  Reason for no coverage   Hint
+     -----------  --------  -----------------------  --------------
+  invalid_red_op         Y
+  invalid_opcode         Y
+
+     Rows:       Hits  FEC Target            Non-masking condition(s)      
+ ---------  ---------  --------------------  -------------------------     
+  Row   1:          1  invalid_red_op_0      ~invalid_opcode               
+  Row   2:          1  invalid_red_op_1      ~invalid_opcode               
+  Row   3:          1  invalid_opcode_0      ~invalid_red_op               
+  Row   4:          1  invalid_opcode_1      ~invalid_red_op               
+
+
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                    130       130         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File ALSU.v --
+
+       Line                                   Node      1H->0L      0L->1H                          "Coverage"
+--------------------------------------------------------------------------------------------------------------
+          4                              serial_in           1           1                              100.00 
+          4                                    rst           1           1                              100.00 
+          4                               red_op_B           1           1                              100.00 
+          4                               red_op_A           1           1                              100.00 
+          4                              direction           1           1                              100.00 
+          4                                    clk           1           1                              100.00 
+          4                                    cin           1           1                              100.00 
+          4                               bypass_B           1           1                              100.00 
+          4                               bypass_A           1           1                              100.00 
+          5                              opcode[2]           1           1                              100.00 
+          5                              opcode[1]           1           1                              100.00 
+          5                              opcode[0]           1           1                              100.00 
+          6                                   B[2]           1           1                              100.00 
+          6                                   B[1]           1           1                              100.00 
+          6                                   B[0]           1           1                              100.00 
+          6                                   A[2]           1           1                              100.00 
+          6                                   A[1]           1           1                              100.00 
+          6                                   A[0]           1           1                              100.00 
+          7                                leds[9]           1           1                              100.00 
+          7                                leds[8]           1           1                              100.00 
+          7                                leds[7]           1           1                              100.00 
+          7                                leds[6]           1           1                              100.00 
+          7                                leds[5]           1           1                              100.00 
+          7                                leds[4]           1           1                              100.00 
+          7                                leds[3]           1           1                              100.00 
+          7                                leds[2]           1           1                              100.00 
+          7                                leds[1]           1           1                              100.00 
+          7                               leds[15]           1           1                              100.00 
+          7                               leds[14]           1           1                              100.00 
+          7                               leds[13]           1           1                              100.00 
+          7                               leds[12]           1           1                              100.00 
+          7                               leds[11]           1           1                              100.00 
+          7                               leds[10]           1           1                              100.00 
+          7                                leds[0]           1           1                              100.00 
+          8                                 out[5]           1           1                              100.00 
+          8                                 out[4]           1           1                              100.00 
+          8                                 out[3]           1           1                              100.00 
+          8                                 out[2]           1           1                              100.00 
+          8                                 out[1]           1           1                              100.00 
+          8                                 out[0]           1           1                              100.00 
+         10                          serial_in_reg           1           1                              100.00 
+         10                           red_op_B_reg           1           1                              100.00 
+         10                           red_op_A_reg           1           1                              100.00 
+         10                          direction_reg           1           1                              100.00 
+         10                                cin_reg           1           1                              100.00 
+         10                           bypass_B_reg           1           1                              100.00 
+         10                           bypass_A_reg           1           1                              100.00 
+         11                          opcode_reg[2]           1           1                              100.00 
+         11                          opcode_reg[1]           1           1                              100.00 
+         11                          opcode_reg[0]           1           1                              100.00 
+         12                               B_reg[2]           1           1                              100.00 
+         12                               B_reg[1]           1           1                              100.00 
+         12                               B_reg[0]           1           1                              100.00 
+         12                               A_reg[2]           1           1                              100.00 
+         12                               A_reg[1]           1           1                              100.00 
+         12                               A_reg[0]           1           1                              100.00 
+         13                            out_next[5]           1           1                              100.00 
+         13                            out_next[4]           1           1                              100.00 
+         13                            out_next[3]           1           1                              100.00 
+         13                            out_next[2]           1           1                              100.00 
+         13                            out_next[1]           1           1                              100.00 
+         13                            out_next[0]           1           1                              100.00 
+         14                         invalid_red_op           1           1                              100.00 
+         14                         invalid_opcode           1           1                              100.00 
+         14                                invalid           1           1                              100.00 
+
+Total Node Count     =         65 
+Toggled Node Count   =         65 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (130 of 130 bins)
+
+
+Total Coverage By File (code coverage only, filtered view): 100.0%
+

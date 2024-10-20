@@ -1,0 +1,137 @@
+Coverage Report by file with details
+
+=================================================================================
+=== File: counter.v
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            7         7         0     100.0
+
+================================Statement Details================================
+
+Statement Coverage for file counter.v --
+
+    1                                                ////////////////////////////////////////////////////////////////////////////////
+    2                                                // Author: Kareem Waseem
+    3                                                // Course: Digital Verification using SV & UVM
+    4                                                //
+    5                                                // Description: Counter Design 
+    6                                                // 
+    7                                                ////////////////////////////////////////////////////////////////////////////////
+    8                                                
+    9                                                module counter (clk ,rst_n, load_n, up_down, ce, data_load, count_out, max_count, zero);
+    10                                               parameter WIDTH = 4;
+    11                                               input clk;
+    12                                               input rst_n;
+    13                                               input load_n;
+    14                                               input up_down;
+    15                                               input ce;
+    16                                               input [WIDTH-1:0] data_load;
+    17                                               output reg [WIDTH-1:0] count_out;
+    18                                               output max_count;
+    19                                               output zero;
+    20                                               
+    21              1                        100     always @(posedge clk) begin
+    22                                                   if (!rst_n)
+    23              1                          5             count_out <= 0;
+    24                                                   else if (!load_n)
+    25              1                         74             count_out <= data_load;
+    26                                                   else if (ce)
+    27                                                       if (up_down)
+    28              1                          7                 count_out <= count_out + 1;
+    29                                                       else 
+    30              1                          6                 count_out <= count_out - 1;
+    31                                               end
+    32                                               
+    33              1                         89     assign max_count = (count_out == {WIDTH{1'b1}})? 1:0;
+    34              1                         89     assign zero = (count_out == 0)? 1:0;
+    35                                               
+    36                                               endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                        10        10         0     100.0
+
+================================Branch Details================================
+
+Branch Coverage for file counter.v --
+
+------------------------------------IF Branch------------------------------------
+    22                                       100     Count coming in to IF
+    22              1                          5         if (!rst_n)
+    24              1                         74         else if (!load_n)
+    26              1                         13         else if (ce)
+                                               8     All False Count
+Branch totals: 4 hits of 4 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    27                                        13     Count coming in to IF
+    27              1                          7             if (up_down)
+    29              1                          6             else 
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    33                                        88     Count coming in to IF
+    33              1                          2     assign max_count = (count_out == {WIDTH{1'b1}})? 1:0;
+    33              2                         86     assign max_count = (count_out == {WIDTH{1'b1}})? 1:0;
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    34                                        88     Count coming in to IF
+    34              1                         11     assign zero = (count_out == 0)? 1:0;
+    34              2                         77     assign zero = (count_out == 0)? 1:0;
+Branch totals: 2 hits of 2 branches = 100.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                     30        30         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File counter.v --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+         11                                    clk           1           1      100.00 
+         12                                  rst_n           1           1      100.00 
+         13                                 load_n           1           1      100.00 
+         14                                up_down           1           1      100.00 
+         15                                     ce           1           1      100.00 
+         16                           data_load[3]           1           1      100.00 
+         16                           data_load[2]           1           1      100.00 
+         16                           data_load[1]           1           1      100.00 
+         16                           data_load[0]           1           1      100.00 
+         17                           count_out[3]           1           1      100.00 
+         17                           count_out[2]           1           1      100.00 
+         17                           count_out[1]           1           1      100.00 
+         17                           count_out[0]           1           1      100.00 
+         18                              max_count           1           1      100.00 
+         19                                   zero           1           1      100.00 
+
+Total Node Count     =         15 
+Toggled Node Count   =         15 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (30 of 30 bins)
+
+
+Total Coverage By File (code coverage only, filtered view): 100.0%
+
